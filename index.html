@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>BlackBox</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div>
+
+            <h1>BLACKBOX</h1>
+
+            <p class="tagline">
+
+                CTF Toolkit
+
+            </p>
+
+            <button onclick="showView('dashboard')">
+                🏠 Dashboard
+            </button>
+
+            <button onclick="showView('web-dashboard')">
+                🌐 Web Exploitation
+            </button>
+
+            <button onclick="showView('crypto-dashboard')">
+                🔐 Cryptography
+            </button>
+
+            <button onclick="showView('pwn-dashboard')">
+                💣 Binary Exploitation
+            </button>
+
+            <button onclick="showView('reverse-dashboard')">
+                ⚙ Reverse Engineering
+            </button>
+
+            <button onclick="showView('forensics-dashboard')">
+                🧪 Forensics
+            </button>
+
+            <button onclick="showView('osint-dashboard')">
+                🔍 OSINT
+            </button>
+
+            <button onclick="showView('misc-dashboard')">
+                🎲 Miscellaneous
+            </button>
+
+            <button onclick="showView('about')">
+                ℹ About
+            </button>
+
+        </div>
+
+        <div class="version">
+
+            BlackBox v3.1
+
+        </div>
+
+    </aside>
+
+    <!-- CONTENT -->
+
+    <main class="content">
+
+        <!-- DASHBOARD -->
+
+        <section id="dashboard"
+                 class="view active">
+
+            <h2>Dashboard</h2>
+
+            <div class="card-grid">
+
+                <div class="card"
+                     onclick="showView('web-dashboard')">
+
+                    🌐 Web Exploitation
+
+                    <span>
+                        3 Planned Tools
+                    </span>
+
+                </div>
+
+                <div class="card"
+                     onclick="showView('crypto-dashboard')">
+
+                    🔐 Cryptography
+
+                    <span>
+                        5 Available Tools
+                    </span>
+
+                </div>
+
+                <div class="card"
+                     onclick="showView('pwn-dashboard')">
+
+                    💣 Binary Exploitation
+
+                    <span>
+                        Coming Soon
+                    </span>
+
+                </div>
+
+                <div class="card"
+                     onclick="showView('reverse-dashboard')">
+
+                    ⚙ Reverse Engineering
+
+                    <span>
+                        Coming Soon
+                    </span>
+
+                </div>
+
+                <div class="card"
+                     onclick="showView('forensics-dashboard')">
+
+                    🧪 Forensics
+
+                    <span>
+                        Coming Soon
+                    </span>
+
+                </div>
+
+                <div class="card"
+                     onclick="showView('osint-dashboard')">
+
+                    🔍 OSINT
+
+                    <span>
+                        Coming Soon
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- CRYPTO DASHBOARD -->
+
+        <section id="crypto-dashboard"
+                 class="view">
+
+            <button class="back-btn"
+                    onclick="showView('dashboard')">
+
+                ← Dashboard
+
+            </button>
+
+            <h2>Cryptography</h2>
+
+            <div class="card-grid">
+
+                <div class="card"
+                     onclick="showView('hash-generator')">
+
+                    🔒 Hash Generator
+
+                </div>
+
+                <div class="card"
+                     onclick="showView('hash-cracker')">
+
+                    🔓 Hash Cracker
+
+                </div>
+
+                <div class="card"
+                     onclick="showView('encoding')">
+
+                    🔤 Encoding
+
+                </div>
+
+                <div class="card"
+                     onclick="showView('decoding')">
+
+                    🔓 Decoding
+
+                </div>
+
+                <div class="card"
+                     onclick="showView('identifier')">
+
+                    🕵 Identifier
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- HASH GENERATOR -->
+
+        <section id="hash-generator"
+                 class="view">
+
+            <button class="back-btn"
+                    onclick="showView('crypto-dashboard')">
+
+                ← Cryptography
+
+            </button>
+
+            <h2>Hash Generator</h2>
+
+            <textarea id="hashText"
+                      placeholder="Enter text..."></textarea>
+
+            <div class="button-group">
+
+                <button onclick="generateHash('md5')">
+                    MD5
+                </button>
+
+                <button onclick="generateHash('sha1')">
+                    SHA1
+                </button>
+
+                <button onclick="generateHash('sha256')">
+                    SHA256
+                </button>
+
+                <button onclick="generateHash('sha512')">
+                    SHA512
+                </button>
+
+            </div>
+
+            <div id="hashOutput"></div>
+
+        </section>
+
+        <!-- HASH CRACKER -->
+
+        <section id="hash-cracker"
+                 class="view">
+
+            <button class="back-btn"
+                    onclick="showView('crypto-dashboard')">
+
+                ← Cryptography
+
+            </button>
+
+            <h2>Hash Cracker</h2>
+
+            <textarea id="crackInput"
+                      placeholder="Paste hash..."></textarea>
+
+            <select id="wordlistSelect">
+
+                <option value="all">
+                    All Wordlists
+                </option>
+
+                <option value="common">
+                    Common Passwords
+                </option>
+
+                <option value="rockyou">
+                    RockYou Mini
+                </option>
+
+                <option value="ctf">
+                    CTF Common
+                </option>
+
+            </select>
+
+            <textarea id="wordlistInput"
+                      placeholder="Custom words (optional)"></textarea>
+
+            <input type="file"
+                   id="wordlistFile">
+
+            <button onclick="crackHash()">
+
+                Crack Hash
+
+            </button>
+            <br>
+            
+<div id="crackStatus"></div>
+
+<div id="crackOutput"></div>
+
+        </section>
+
+        <!-- ENCODING -->
+
+        <section id="encoding"
+                 class="view">
+
+            <button class="back-btn"
+                    onclick="showView('crypto-dashboard')">
+
+                ← Cryptography
+
+            </button>
+
+            <h2>Encoding</h2>
+
+            <textarea id="encodeInput"></textarea>
+
+            <div class="button-group">
+
+                <button onclick="encodeBase64()">
+                    Base64
+                </button>
+
+                <button onclick="encodeHex()">
+                    Hex
+                </button>
+
+                <button onclick="encodeBinary()">
+                    Binary
+                </button>
+
+                <button onclick="encodeURL()">
+                    URL
+                </button>
+
+            </div>
+
+            <div id="encodeOutput"></div>
+
+        </section>
+
+        <!-- DECODING -->
+
+        <section id="decoding"
+                 class="view">
+
+            <button class="back-btn"
+                    onclick="showView('crypto-dashboard')">
+
+                ← Cryptography
+
+            </button>
+
+            <h2>Decoding</h2>
+
+            <textarea id="decodeInput"></textarea>
+
+            <div class="button-group">
+
+                <button onclick="decodeBase64()">
+                    Base64
+                </button>
+
+                <button onclick="decodeHex()">
+                    Hex
+                </button>
+
+                <button onclick="decodeBinary()">
+                    Binary
+                </button>
+
+                <button onclick="decodeURL()">
+                    URL
+                </button>
+
+            </div>
+
+            <div id="decodeOutput"></div>
+
+        </section>
+
+        <!-- IDENTIFIER -->
+
+        <section id="identifier"
+                 class="view">
+
+            <button class="back-btn"
+                    onclick="showView('crypto-dashboard')">
+
+                ← Cryptography
+
+            </button>
+
+            <h2>Identifier</h2>
+
+            <textarea id="analysisInput"></textarea>
+
+            <button onclick="analyzeInput()">
+
+                Identify
+
+            </button>
+
+            <div id="analysisOutput"></div>
+
+        </section>
+
+        <!-- PLACEHOLDER CATEGORIES -->
+
+        <section id="web-dashboard" class="view">
+            <button class="back-btn" onclick="showView('dashboard')">← Dashboard</button>
+            <h2>Web Exploitation</h2>
+            <div class="coming-soon">JWT Decoder • Cookie Parser • URL Parser</div>
+        </section>
+
+        <section id="pwn-dashboard" class="view">
+            <button class="back-btn" onclick="showView('dashboard')">← Dashboard</button>
+            <h2>Binary Exploitation</h2>
+            <div class="coming-soon">ROP Helper • Endian Converter • Shellcode Tools</div>
+        </section>
+
+        <section id="reverse-dashboard" class="view">
+            <button class="back-btn" onclick="showView('dashboard')">← Dashboard</button>
+            <h2>Reverse Engineering</h2>
+            <div class="coming-soon">String Extractor • Hex Viewer • Assembly Reference</div>
+        </section>
+
+        <section id="forensics-dashboard" class="view">
+            <button class="back-btn" onclick="showView('dashboard')">← Dashboard</button>
+            <h2>Forensics</h2>
+            <div class="coming-soon">File Hasher • Metadata Viewer • Magic Numbers</div>
+        </section>
+
+        <section id="osint-dashboard" class="view">
+            <button class="back-btn" onclick="showView('dashboard')">← Dashboard</button>
+            <h2>OSINT</h2>
+            <div class="coming-soon">WHOIS • Username Search • Metadata Analysis</div>
+        </section>
+
+        <section id="misc-dashboard" class="view">
+            <button class="back-btn" onclick="showView('dashboard')">← Dashboard</button>
+            <h2>Miscellaneous</h2>
+            <div class="coming-soon">Timestamp Converter • Regex Tester • Text Utilities</div>
+        </section>
+
+        <!-- ABOUT -->
+
+        <section id="about"
+                 class="view">
+
+            <h2>About BlackBox</h2>
+
+            <p>
+                BlackBox is a modular toolkit designed for Capture The Flag players.
+            </p>
+
+            <br>
+
+            <p>
+                Built by Mishen
+            </p>
+
+            <p>
+                Team: Bug Bouncers
+            </p>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
