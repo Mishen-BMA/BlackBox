@@ -650,3 +650,156 @@ else if(
     ).innerHTML =
     result;
 }
+
+function decodeJWT(){
+
+    try{
+
+        const token =
+        document.getElementById(
+            "jwtInput"
+        ).value.trim();
+
+        const parts =
+        token.split(".");
+
+        if(parts.length < 2){
+
+            throw new Error();
+        }
+
+        const decodePart = (str) => {
+
+            str = str.replace(/-/g, "+")
+                     .replace(/_/g, "/");
+
+            while(str.length % 4){
+
+                str += "=";
+            }
+
+            return JSON.parse(atob(str));
+        };
+
+        const header =
+        decodePart(parts[0]);
+
+        const payload =
+        decodePart(parts[1]);
+
+        document.getElementById(
+            "jwtOutput"
+        ).innerHTML =
+
+        `
+        <h3>Header</h3>
+
+        <pre>${JSON.stringify(header,null,2)}</pre>
+
+        <h3>Payload</h3>
+
+        <pre>${JSON.stringify(payload,null,2)}</pre>
+        `;
+    }
+
+    catch{
+
+        document.getElementById(
+            "jwtOutput"
+        ).innerHTML =
+        "Invalid JWT";
+    }
+}
+
+function parseCookie(){
+
+    const cookie =
+
+    document.getElementById(
+        "cookieInput"
+    ).value.trim();
+
+    if(!cookie){
+
+        document.getElementById(
+            "cookieOutput"
+        ).innerHTML =
+        "Paste a cookie first.";
+
+        return;
+    }
+
+    const pairs =
+    cookie.split(";");
+
+    let result = "";
+
+    pairs.forEach(pair => {
+
+        const parts =
+        pair.split("=");
+
+        if(parts.length >= 2){
+
+            result += `
+            <p>
+
+            <strong>
+            ${parts[0].trim()}
+            </strong>
+
+            :
+
+            ${parts
+                .slice(1)
+                .join("=")}
+
+            </p>
+            `;
+        }
+
+    });
+
+    document.getElementById(
+        "cookieOutput"
+    ).innerHTML =
+    result;
+}
+
+function parseURL(){
+
+    try{
+
+        const url = new URL(
+
+            document.getElementById(
+                "urlInput"
+            ).value.trim()
+
+        );
+
+        document.getElementById(
+            "urlOutput"
+        ).innerHTML =
+
+        `
+        <p><strong>Protocol:</strong> ${url.protocol}</p>
+
+        <p><strong>Host:</strong> ${url.host}</p>
+
+        <p><strong>Path:</strong> ${url.pathname}</p>
+
+        <p><strong>Query:</strong> ${url.search || "None"}</p>
+
+        <p><strong>Hash:</strong> ${url.hash || "None"}</p>
+        `;
+    }
+
+    catch{
+
+        document.getElementById(
+            "urlOutput"
+        ).innerHTML =
+        "Invalid URL";
+    }
+}

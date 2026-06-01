@@ -99,11 +99,10 @@
                     🌐 Web Exploitation
 
                     <span>
-                        3 Planned Tools
+                        3 Available Tools
                     </span>
 
                 </div>
-
                 <div class="card"
                      onclick="showView('crypto-dashboard')">
 
@@ -152,6 +151,17 @@
                      onclick="showView('osint-dashboard')">
 
                     🔍 OSINT
+
+                    <span>
+                        Coming Soon
+                    </span>
+
+                </div>
+
+                <div class="card"
+                     onclick="showView('misc-dashboard')">
+
+                    🎲 Miscellaneous
 
                     <span>
                         Coming Soon
@@ -231,31 +241,21 @@
             </button>
 
             <h2>Hash Generator</h2>
+                <!-- Tool container: input, controls, and output for Hash Generator -->
+                <div class="tool">
+                    <textarea id="hashText" placeholder="Enter text..."></textarea>
 
-            <textarea id="hashText"
-                      placeholder="Enter text..."></textarea>
+                    <div class="tool-controls">
+                        <div class="button-group">
+                            <button onclick="generateHash('md5')">MD5</button>
+                            <button onclick="generateHash('sha1')">SHA1</button>
+                            <button onclick="generateHash('sha256')">SHA256</button>
+                            <button onclick="generateHash('sha512')">SHA512</button>
+                        </div>
+                    </div>
 
-            <div class="button-group">
-
-                <button onclick="generateHash('md5')">
-                    MD5
-                </button>
-
-                <button onclick="generateHash('sha1')">
-                    SHA1
-                </button>
-
-                <button onclick="generateHash('sha256')">
-                    SHA256
-                </button>
-
-                <button onclick="generateHash('sha512')">
-                    SHA512
-                </button>
-
-            </div>
-
-            <div id="hashOutput"></div>
+                    <div class="tool-output" id="hashOutput"></div>
+                </div>
 
         </section>
 
@@ -272,46 +272,35 @@
             </button>
 
             <h2>Hash Cracker</h2>
+                <!-- Tool container: inputs and controls for Hash Cracker -->
+                <div class="tool">
+                    <!-- Primary hash input -->
+                    <textarea id="crackInput" placeholder="Paste hash..."></textarea>
 
-            <textarea id="crackInput"
-                      placeholder="Paste hash..."></textarea>
+                    <!-- Wordlist selection and optional inputs. Note: JS may read these by id -->
+                    <div class="tool-controls">
+                        <select id="wordlistSelect">
+                            <option value="all">All Wordlists</option>
+                            <option value="common">Common Passwords</option>
+                            <option value="rockyou">RockYou Mini</option>
+                            <option value="ctf">CTF Common</option>
+                        </select>
 
-            <select id="wordlistSelect">
+                        <textarea id="wordlistInput" placeholder="Custom words (optional)"></textarea>
 
-                <option value="all">
-                    All Wordlists
-                </option>
+                        <input type="file" id="wordlistFile">
 
-                <option value="common">
-                    Common Passwords
-                </option>
+                        <div style="margin-top:8px;">
+                            <button onclick="crackHash()">Crack Hash</button>
+                        </div>
+                    </div>
 
-                <option value="rockyou">
-                    RockYou Mini
-                </option>
-
-                <option value="ctf">
-                    CTF Common
-                </option>
-
-            </select>
-
-            <textarea id="wordlistInput"
-                      placeholder="Custom words (optional)"></textarea>
-
-            <input type="file"
-                   id="wordlistFile">
-
-            <button onclick="crackHash()">
-
-                Crack Hash
-
-            </button>
-            <br>
-            
-<div id="crackStatus"></div>
-
-<div id="crackOutput"></div>
+                    <!-- Status and output containers -->
+                    <div class="tool-output">
+                        <div id="crackStatus"></div>
+                        <div id="crackOutput"></div>
+                    </div>
+                </div>
 
         </section>
 
@@ -328,30 +317,21 @@
             </button>
 
             <h2>Encoding</h2>
+                <!-- Encoding tool: input, actions, output -->
+                <div class="tool">
+                    <textarea id="encodeInput"></textarea>
 
-            <textarea id="encodeInput"></textarea>
+                    <div class="tool-controls">
+                        <div class="button-group">
+                            <button onclick="encodeBase64()">Base64</button>
+                            <button onclick="encodeHex()">Hex</button>
+                            <button onclick="encodeBinary()">Binary</button>
+                            <button onclick="encodeURL()">URL</button>
+                        </div>
+                    </div>
 
-            <div class="button-group">
-
-                <button onclick="encodeBase64()">
-                    Base64
-                </button>
-
-                <button onclick="encodeHex()">
-                    Hex
-                </button>
-
-                <button onclick="encodeBinary()">
-                    Binary
-                </button>
-
-                <button onclick="encodeURL()">
-                    URL
-                </button>
-
-            </div>
-
-            <div id="encodeOutput"></div>
+                    <div class="tool-output" id="encodeOutput"></div>
+                </div>
 
         </section>
 
@@ -368,30 +348,21 @@
             </button>
 
             <h2>Decoding</h2>
+                <!-- Decoding tool: input, actions, output -->
+                <div class="tool">
+                    <textarea id="decodeInput"></textarea>
 
-            <textarea id="decodeInput"></textarea>
+                    <div class="tool-controls">
+                        <div class="button-group">
+                            <button onclick="decodeBase64()">Base64</button>
+                            <button onclick="decodeHex()">Hex</button>
+                            <button onclick="decodeBinary()">Binary</button>
+                            <button onclick="decodeURL()">URL</button>
+                        </div>
+                    </div>
 
-            <div class="button-group">
-
-                <button onclick="decodeBase64()">
-                    Base64
-                </button>
-
-                <button onclick="decodeHex()">
-                    Hex
-                </button>
-
-                <button onclick="decodeBinary()">
-                    Binary
-                </button>
-
-                <button onclick="decodeURL()">
-                    URL
-                </button>
-
-            </div>
-
-            <div id="decodeOutput"></div>
+                    <div class="tool-output" id="decodeOutput"></div>
+                </div>
 
         </section>
 
@@ -408,16 +379,16 @@
             </button>
 
             <h2>Identifier</h2>
+                <!-- Identifier tool: input and output -->
+                <div class="tool">
+                    <textarea id="analysisInput"></textarea>
 
-            <textarea id="analysisInput"></textarea>
+                    <div class="tool-controls">
+                        <button onclick="analyzeInput()">Identify</button>
+                    </div>
 
-            <button onclick="analyzeInput()">
-
-                Identify
-
-            </button>
-
-            <div id="analysisOutput"></div>
+                    <div class="tool-output" id="analysisOutput"></div>
+                </div>
 
         </section>
 
@@ -426,8 +397,112 @@
         <section id="web-dashboard" class="view">
             <button class="back-btn" onclick="showView('dashboard')">← Dashboard</button>
             <h2>Web Exploitation</h2>
-            <div class="coming-soon">JWT Decoder • Cookie Parser • URL Parser</div>
+            <div class="card-grid">
+
+    <div class="card"
+         onclick="showView('jwt-decoder')">
+
+        🔑 JWT Decoder
+
+    </div>
+
+    <div class="card"
+         onclick="showView('cookie-parser')">
+
+        🍪 Cookie Parser
+
+    </div>
+
+    <div class="card"
+         onclick="showView('url-parser')">
+
+        🔗 URL Parser
+
+    </div>
+
+</div>
         </section>
+        <section id="jwt-decoder"
+         class="view">
+
+    <button class="back-btn"
+            onclick="showView('web-dashboard')">
+
+        ← Web Exploitation
+
+    </button>
+
+    <h2>JWT Decoder</h2>
+
+    <textarea id="jwtInput"
+              placeholder="Paste JWT token"></textarea>
+
+    <button onclick="decodeJWT()">
+
+        Decode JWT
+
+    </button>
+
+    <div id="jwtOutput"></div>
+
+    <!-- Grouping JWT inputs and output to make structure explicit -->
+    <!-- Note: keep `jwtInput` id as JS depends on it -->
+
+</section>
+
+<section id="cookie-parser"
+         class="view">
+
+    <button class="back-btn"
+            onclick="showView('web-dashboard')">
+
+        ← Web Exploitation
+
+    </button>
+
+    <h2>Cookie Parser</h2>
+
+    <textarea id="cookieInput"
+              placeholder="Paste cookie"></textarea>
+
+    <button onclick="parseCookie()">
+
+        Parse Cookie
+
+    </button>
+
+    <div id="cookieOutput"></div>
+
+    <!-- Grouping Cookie Parser inputs and output. `cookieInput` is used by JS. -->
+
+</section>
+
+<section id="url-parser"
+         class="view">
+
+    <button class="back-btn"
+            onclick="showView('web-dashboard')">
+
+        ← Web Exploitation
+
+    </button>
+
+    <h2>URL Parser</h2>
+
+    <textarea id="urlInput"
+              placeholder="Paste URL"></textarea>
+
+    <button onclick="parseURL()">
+
+        Parse URL
+
+    </button>
+
+    <div id="urlOutput"></div>
+
+    <!-- Grouping URL Parser inputs and output. `urlInput` id is required by JS. -->
+
+</section>
 
         <section id="pwn-dashboard" class="view">
             <button class="back-btn" onclick="showView('dashboard')">← Dashboard</button>
