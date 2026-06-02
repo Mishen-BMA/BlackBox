@@ -317,6 +317,8 @@ textarea{
     margin-bottom:15px;
 
     font-size:14px;
+    
+    font-family:monospace;
 }
 
 textarea:focus{
@@ -359,6 +361,35 @@ select:focus{
     outline:none;
 
     border-color:var(--primary);
+}
+
+input[type="text"]{
+
+    width:100%;
+
+    background:var(--panel);
+
+    color:white;
+
+    border:1px solid var(--border);
+
+    border-radius:14px;
+
+    padding:15px;
+
+    margin-bottom:15px;
+
+    font-size:14px;
+}
+
+input[type="text"]:focus{
+
+    outline:none;
+
+    border-color:var(--primary);
+
+    box-shadow:
+    0 0 15px rgba(0,212,255,.2);
 }
 
 /* =========================
@@ -434,7 +465,15 @@ input[type="file"]{
 #analysisOutput,
 #jwtOutput,
 #cookieOutput,
-#urlOutput{
+#urlOutput,
+#urlParams,
+#headerOutput,
+#htmlOutput,
+#jwtInspectOutput,
+#sqliOutput,
+#xssOutput,
+#payloadOutput,
+#curlOutput{
 
     background:var(--panel);
 
@@ -738,13 +777,55 @@ input[type="file"]{
 
 #jwtOutput h3,
 #cookieOutput h3,
-#urlOutput h3{
+#urlOutput h3,
+#urlParams h3,
+#headerOutput h3,
+#htmlOutput h3,
+#jwtInspectOutput h3,
+#sqliOutput h3,
+#xssOutput h3,
+#payloadOutput h3,
+#curlOutput h3{
 
     margin-bottom:10px;
 }
 
 #cookieOutput p,
-#urlOutput p{
+#urlOutput p,
+#headerOutput p,
+#htmlOutput p{
 
     margin-bottom:8px;
+}
+
+#urlParams{
+    margin-top:15px;
+}
+
+#payloadOutput{
+
+    background:var(--panel);
+
+    border-left:4px solid var(--primary);
+
+    border-radius:14px;
+
+    padding:20px;
+
+    margin-top:15px;
+}
+
+#payloadOutput pre{
+
+    background:#0d1117;
+
+    padding:15px;
+
+    border-radius:10px;
+
+    overflow:auto;
+
+    white-space:pre-wrap;
+
+    color:#00d4ff;
 }

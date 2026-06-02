@@ -10,8 +10,14 @@
 
     <title>BlackBox</title>
 
-    <link rel="stylesheet" href="style.css">
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/outputs.css">
+    <link rel="stylesheet" href="css/crypto-tools.css">
+    <link rel="stylesheet" href="css/web-tools.css">
 
+    <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
 
 </head>
@@ -99,7 +105,7 @@
                     🌐 Web Exploitation
 
                     <span>
-                        3 Available Tools
+                        8 Available Tools
                     </span>
 
                 </div>
@@ -337,33 +343,6 @@
 
         <!-- DECODING -->
 
-        <section id="decoding"
-                 class="view">
-
-            <button class="back-btn"
-                    onclick="showView('crypto-dashboard')">
-
-                ← Cryptography
-
-            </button>
-
-            <h2>Decoding</h2>
-                <!-- Decoding tool: input, actions, output -->
-                <div class="tool">
-                    <textarea id="decodeInput"></textarea>
-
-                    <div class="tool-controls">
-                        <div class="button-group">
-                            <button onclick="decodeBase64()">Base64</button>
-                            <button onclick="decodeHex()">Hex</button>
-                            <button onclick="decodeBinary()">Binary</button>
-                            <button onclick="decodeURL()">URL</button>
-                        </div>
-                    </div>
-
-                    <div class="tool-output" id="decodeOutput"></div>
-                </div>
-
         </section>
 
         <!-- IDENTIFIER -->
@@ -419,6 +398,29 @@
         🔗 URL Parser
 
     </div>
+
+    <div class="card" onclick="showView('header-parser')">
+    📡 HTTP Header Parser
+</div>
+
+<div class="card" onclick="showView('html-tools')">
+    🏷 HTML Encoder / Decoder
+</div>
+
+<div class="card" onclick="showView('jwt-inspector')">
+    🔎 JWT Inspector
+</div>
+
+<div class="card" onclick="showView('payload-library')">
+    📚 Payload Library
+</div>
+
+<div class="card"
+onclick="showView('curl-builder')">
+
+🛠 Request → Curl Builder
+
+</div>
 
 </div>
         </section>
@@ -500,7 +502,172 @@
 
     <div id="urlOutput"></div>
 
-    <!-- Grouping URL Parser inputs and output. `urlInput` id is required by JS. -->
+    <div id="urlParams"></div>
+
+</section>
+
+<section id="header-parser" class="view">
+
+<button class="back-btn"
+onclick="showView('web-dashboard')">
+
+← Web Exploitation
+
+</button>
+
+<h2>HTTP Header Parser</h2>
+
+<textarea id="headerInput"
+placeholder="Paste HTTP headers"></textarea>
+
+<button onclick="parseHeaders()">
+Parse Headers
+</button>
+
+<div id="headerOutput"></div>
+
+</section>
+
+<section id="html-tools" class="view">
+
+<button class="back-btn"
+onclick="showView('web-dashboard')">
+
+← Web Exploitation
+
+</button>
+
+<h2>HTML Encoder / Decoder</h2>
+
+<textarea id="htmlInput"></textarea>
+
+<div class="button-group">
+
+<button onclick="encodeHTML()">
+Encode
+</button>
+
+<button onclick="decodeHTML()">
+Decode
+</button>
+
+</div>
+
+<div id="htmlOutput"></div>
+
+</section>
+
+<section id="jwt-inspector"
+class="view">
+
+<button class="back-btn"
+onclick="showView('web-dashboard')">
+
+← Web Exploitation
+
+</button>
+
+<h2>JWT Inspector</h2>
+
+<textarea id="jwtInspectInput"></textarea>
+
+<button onclick="inspectJWT()">
+Inspect JWT
+</button>
+
+<div id="jwtInspectOutput"></div>
+
+</section>
+
+<section id="payload-library"
+class="view">
+
+<button class="back-btn"
+onclick="showView('web-dashboard')">
+
+← Web Exploitation
+
+</button>
+
+<h2>Payload Library</h2>
+
+<select id="payloadType">
+
+<option value="sqli">
+SQL Injection
+</option>
+
+<option value="xss">
+Cross Site Scripting
+</option>
+
+<option value="lfi">
+LFI
+</option>
+
+<option value="ssrf">
+SSRF
+</option>
+
+<option value="ssti">
+SSTI
+</option>
+
+</select>
+
+<button onclick="loadPayloads()">
+
+Load Payloads
+
+</button>
+
+<div id="payloadOutput"></div>
+
+</section>
+
+<section id="curl-builder"
+class="view">
+
+<button class="back-btn"
+onclick="showView('web-dashboard')">
+
+← Web Exploitation
+
+</button>
+
+<h2>Request → Curl Builder</h2>
+
+<input
+type="text"
+id="curlUrl"
+placeholder="https://example.com/api">
+
+<select id="curlMethod">
+
+<option>GET</option>
+<option>POST</option>
+<option>PUT</option>
+<option>DELETE</option>
+
+</select>
+
+<textarea
+id="curlHeaders"
+placeholder="Headers (one per line)
+Authorization: Bearer token
+Content-Type: application/json"></textarea>
+
+<textarea
+id="curlBody"
+placeholder="Request Body"></textarea>
+
+<button onclick="buildCurl()">
+
+Generate Curl
+
+</button>
+
+<div id="curlOutput"></div>
 
 </section>
 
@@ -561,7 +728,10 @@
 
 </div>
 
-<script src="script.js"></script>
+<!-- App Scripts -->
+<script src="js/app.js"></script>
+<script src="js/tools/crypto-tools.js"></script>
+<script src="js/tools/web-tools.js"></script>
 
 </body>
 </html>

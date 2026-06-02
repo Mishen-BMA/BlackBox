@@ -1,0 +1,168 @@
+/* =========================
+   OUTPUTS
+========================= */
+
+#hashOutput,
+#crackStatus,
+#crackOutput,
+#encodeOutput,
+#decodeOutput,
+#analysisOutput,
+#jwtOutput,
+#cookieOutput,
+#urlOutput,
+#urlParams,
+#headerOutput,
+#htmlOutput,
+#jwtInspectOutput,
+#sqliOutput,
+#xssOutput,
+#payloadOutput,
+#curlOutput{
+
+    background:var(--panel);
+
+    border:1px solid var(--border);
+
+    border-left:4px solid var(--primary);
+
+    border-radius:14px;
+
+    min-height:90px;
+
+    padding:18px;
+
+    margin-top:15px;
+
+    word-break:break-word;
+
+    line-height:1.7;
+    
+    font-size:14px;
+    
+    overflow-x:auto;
+}
+
+#jwtOutput pre{
+
+    background:#0d1117;
+
+    padding:15px;
+
+    border-radius:10px;
+
+    overflow-x:auto;
+
+    margin-top:10px;
+
+    color:#00d4ff;
+}
+
+#jwtOutput h3,
+#cookieOutput h3,
+#urlOutput h3,
+#urlParams h3,
+#headerOutput h3,
+#htmlOutput h3,
+#jwtInspectOutput h3,
+#sqliOutput h3,
+#xssOutput h3,
+#payloadOutput h3,
+#curlOutput h3{
+
+    margin-bottom:10px;
+}
+
+#cookieOutput p,
+#urlOutput p,
+#headerOutput p,
+#htmlOutput p{
+
+    margin-bottom:8px;
+}
+
+#urlParams{
+    margin-top:15px;
+}
+
+#payloadOutput{
+
+    background:var(--panel);
+
+    border-left:4px solid var(--primary);
+
+    border-radius:14px;
+
+    padding:20px;
+
+    margin-top:15px;
+}
+
+#payloadOutput pre{
+
+    background:#0d1117;
+
+    padding:15px;
+
+    border-radius:10px;
+
+    overflow:auto;
+
+    white-space:pre-wrap;
+
+    color:#00d4ff;
+}
+
+#curlOutput pre{
+
+    background:#0d1117;
+
+    padding:15px;
+
+    border-radius:10px;
+
+    overflow-x:auto;
+
+    white-space:pre-wrap;
+
+    color:#00d4ff;
+
+    font-family:monospace;
+}
+
+/* =========================
+   TOOL STYLING
+========================= */
+
+.tool{
+
+    margin-bottom:30px;
+}
+
+.tool-controls{
+
+    margin-bottom:15px;
+}
+
+.tool-output{
+
+    background:var(--panel);
+
+    border:1px solid var(--border);
+
+    border-left:4px solid var(--primary);
+
+    border-radius:14px;
+
+    min-height:90px;
+
+    padding:18px;
+
+    margin-top:15px;
+
+    word-break:break-word;
+
+    line-height:1.7;
+    
+    font-size:14px;
+}
