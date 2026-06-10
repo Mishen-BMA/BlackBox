@@ -1,0 +1,151 @@
+/* =========================
+   VIEW TRANSITIONS
+========================= */
+
+.view.active{
+    animation: fadeInView 0.2s ease;
+}
+
+@keyframes fadeInView{
+    from{ opacity: 0; transform: translateY(8px); }
+    to{   opacity: 1; transform: translateY(0);   }
+}
+
+/* =========================
+   CARD ANIMATIONS
+========================= */
+
+.card-grid .card{
+    animation: fadeInCard 0.3s ease both;
+}
+
+.card-grid .card:nth-child(1){ animation-delay: 0.03s; }
+.card-grid .card:nth-child(2){ animation-delay: 0.06s; }
+.card-grid .card:nth-child(3){ animation-delay: 0.09s; }
+.card-grid .card:nth-child(4){ animation-delay: 0.12s; }
+.card-grid .card:nth-child(5){ animation-delay: 0.15s; }
+.card-grid .card:nth-child(6){ animation-delay: 0.18s; }
+.card-grid .card:nth-child(7){ animation-delay: 0.21s; }
+.card-grid .card:nth-child(8){ animation-delay: 0.24s; }
+
+@keyframes fadeInCard{
+    from{ opacity: 0; transform: translateY(12px); }
+    to{   opacity: 1; transform: translateY(0);    }
+}
+
+/* =========================
+   GLOW PULSE
+========================= */
+
+.glow-pulse{
+    animation: glowPulse 2s ease-in-out infinite;
+}
+
+@keyframes glowPulse{
+    0%, 100%{ text-shadow: 0 0 10px var(--primary-glow); }
+    50%{      text-shadow: 0 0 25px var(--primary-glow),
+                           0 0 50px var(--primary-dim); }
+}
+
+/* =========================
+   COPY SUCCESS
+========================= */
+
+@keyframes copyFlash{
+    0%{   background: var(--bg); }
+    30%{  background: rgba(63, 185, 80, 0.1); }
+    100%{ background: var(--bg); }
+}
+
+.copy-flash{
+    animation: copyFlash 0.5s ease;
+}
+
+/* =========================
+   LOADING SPINNER
+========================= */
+
+.spinner{
+    width:          20px;
+    height:         20px;
+    border:         2px solid var(--border);
+    border-top:     2px solid var(--primary);
+    border-radius:  50%;
+    animation:      spin 0.7s linear infinite;
+    display:        inline-block;
+}
+
+@keyframes spin{
+    to{ transform: rotate(360deg); }
+}
+
+/* =========================
+   SIDEBAR LOGO GLOW
+========================= */
+
+.sidebar-logo{
+    animation: logoGlow 3s ease-in-out infinite;
+}
+
+@keyframes logoGlow{
+    0%, 100%{ text-shadow: 0 0 15px var(--primary-glow); }
+    50%{      text-shadow: 0 0 30px var(--primary-glow),
+                           0 0 60px var(--primary-dim); }
+}
+
+/* =========================
+   SCAN LINE EFFECT
+========================= */
+
+.scan-line::after{
+    content:    '';
+    position:   absolute;
+    top:        0;
+    left:       0;
+    right:      0;
+    height:     2px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    animation:  scanLine 3s linear infinite;
+    opacity:    0.4;
+}
+
+@keyframes scanLine{
+    from{ top: 0%; }
+    to{   top: 100%; }
+}
+
+/* =========================
+   TOAST
+========================= */
+
+.toast{
+    animation: slideInToast 0.3s ease;
+}
+
+@keyframes slideInToast{
+    from{ transform: translateX(80px); opacity: 0; }
+    to{   transform: translateX(0);    opacity: 1; }
+}
+
+/* =========================
+   BLINK CURSOR
+========================= */
+
+.blink{
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink{
+    50%{ opacity: 0; }
+}
+
+/* =========================
+   HIGHLIGHT SEARCH MATCH
+========================= */
+
+.search-highlight{
+    background: var(--primary-dim);
+    color:      var(--primary);
+    border-radius: 3px;
+    padding:    0 2px;
+}

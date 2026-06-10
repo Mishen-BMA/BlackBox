@@ -1,199 +1,154 @@
 /* =========================
-   GLOBAL
+   RESET
 ========================= */
 
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 html{
-    font-size:16px;
+    font-size: 16px;
+    scroll-behavior: smooth;
 }
+
+/* =========================
+   CSS VARIABLES
+========================= */
 
 :root{
+    /* Backgrounds */
+    --bg:           #0d1117;
+    --topbar-bg:    rgba(13, 17, 23, 0.95);
+    --panel:        #161b22;
+    --panel-light:  #1f2937;
+    --panel-hover:  #21262d;
 
-    --bg:#0d1117;
-    --panel:#161b22;
-    --panel-light:#1f2937;
-    --border:#30363d;
-    --primary:#00d4ff;
-    --text:#ffffff;
-    --muted:#9ca3af;
+    /* Borders */
+    --border:       #30363d;
+    --border-light: #3d444d;
+
+    /* Colors */
+    --primary:      #00d4ff;
+    --primary-dim:  rgba(0, 212, 255, 0.15);
+    --primary-glow: rgba(0, 212, 255, 0.4);
+    --on-primary:   #031016;
+    --success:      #3fb950;
+    --warning:      #d29922;
+    --danger:       #f85149;
+    --purple:       #bc8cff;
+
+    /* Text */
+    --text:         #f4f8ff;
+    --muted:        #a8b3c2;
+    --muted-light:  #cbd5e1;
+
+    /* Misc */
+    --radius:       14px;
+    --radius-sm:    10px;
+    --radius-lg:    18px;
+    --transition:   0.25s ease;
+    --font:         'Segoe UI', system-ui, sans-serif;
+    --font-mono:    'Cascadia Code', 'Fira Code', 'Consolas', monospace;
 }
+
+/* =========================
+   HACKER GREEN THEME
+========================= */
+
+[data-theme="hacker"]{
+    --bg:           #0a0f0a;
+    --topbar-bg:    rgba(10, 15, 10, 0.95);
+    --panel:        #0d1a0d;
+    --panel-light:  #122112;
+    --panel-hover:  #162516;
+    --border:       #1a3a1a;
+    --border-light: #2f6b2f;
+    --primary:      #00ff41;
+    --primary-dim:  rgba(0, 255, 65, 0.1);
+    --primary-glow: rgba(0, 255, 65, 0.4);
+    --on-primary:   #001a07;
+    --text:         #f0fff4;
+    --muted:        #9fcfab;
+    --muted-light:  #c6f6d5;
+}
+
+/* =========================
+   MIDNIGHT THEME
+========================= */
+
+[data-theme="midnight"]{
+    --bg:           #070711;
+    --topbar-bg:    rgba(7, 7, 17, 0.95);
+    --panel:        #0f0f23;
+    --panel-light:  #16163a;
+    --panel-hover:  #1a1a42;
+    --border:       #2a2a5a;
+    --border-light: #4c4ca3;
+    --primary:      #a78bfa;
+    --primary-dim:  rgba(167, 139, 250, 0.18);
+    --primary-glow: rgba(167, 139, 250, 0.45);
+    --on-primary:   #120b2e;
+    --text:         #f6f3ff;
+    --muted:        #b8addd;
+    --muted-light:  #d8d0ff;
+}
+
+/* =========================
+   PINK THEME
+========================= */
+
+[data-theme="pink"]{
+    --bg:           #120812;
+    --topbar-bg:    rgba(18, 8, 18, 0.95);
+    --panel:        #1d0d1f;
+    --panel-light:  #2b1730;
+    --panel-hover:  #341b3a;
+    --border:       #58305d;
+    --border-light: #74427a;
+    --primary:      #ff3eb5;
+    --primary-dim:  rgba(255, 62, 181, 0.15);
+    --primary-glow: rgba(255, 62, 181, 0.4);
+    --on-primary:   #210015;
+    --text:         #fff2fb;
+    --muted:        #d8aeca;
+    --muted-light:  #f2cde5;
+}
+
+/* =========================
+   YELLOW THEME
+========================= */
+
+[data-theme="yellow"]{
+    --bg:           #111007;
+    --topbar-bg:    rgba(17, 16, 7, 0.95);
+    --panel:        #1d1a0b;
+    --panel-light:  #2a2510;
+    --panel-hover:  #332d13;
+    --border:       #51471a;
+    --border-light: #6b5d20;
+    --primary:      #ffe45c;
+    --primary-dim:  rgba(255, 228, 92, 0.16);
+    --primary-glow: rgba(255, 228, 92, 0.42);
+    --on-primary:   #171200;
+    --text:         #fffbea;
+    --muted:        #cdbf86;
+    --muted-light:  #f1e4ad;
+}
+
+/* =========================
+   BASE
+========================= */
 
 body{
-
-    background:var(--bg);
-
-    color:var(--text);
-
-    font-family:'Segoe UI',sans-serif;
-
-    overflow-x:hidden;
-    
-    min-height:100vh;
-}
-
-/* =========================
-   APP
-========================= */
-
-.app{
-
-    display:flex;
-
-    min-height:100vh;
-    
-    height:auto;
-}
-
-/* =========================
-   SIDEBAR
-========================= */
-
-.sidebar{
-
-    width:260px;
-    
-    min-width:260px;
-
-    background:var(--panel);
-
-    border-right:1px solid var(--border);
-
-    padding:clamp(12px, 3vw, 25px);
-
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:space-between;
-    
-    overflow-y:auto;
-    
-    flex-shrink:0;
-}
-
-.sidebar h1{
-
-    color:var(--primary);
-
-    text-align:center;
-
-    margin-bottom:10px;
-
-    font-size:32px;
-
-    letter-spacing:2px;
-
-    text-shadow:
-    0 0 15px rgba(0,212,255,.5);
-}
-
-.tagline{
-
-    text-align:center;
-
-    color:var(--muted);
-
-    margin-bottom:25px;
-
-    font-size:14px;
-}
-
-.sidebar button{
-
-    width:100%;
-
-    background:transparent;
-
-    color:white;
-
-    border:1px solid var(--border);
-
-    padding:12px;
-
-    margin-bottom:10px;
-
-    border-radius:12px;
-
-    cursor:pointer;
-
-    text-align:left;
-
-    transition:.25s;
-    
-    font-size:14px;
-
-}
-
-.sidebar button:hover{
-
-    background:var(--primary);
-
-    color:black;
-
-    border-color:var(--primary);
-
-    transform:translateX(4px);
-}
-
-.version{
-
-    color:var(--muted);
-
-    text-align:center;
-    
-    font-size:13px;
-    
-    margin-top:20px;
-}
-
-/* =========================
-   CONTENT
-========================= */
-
-.content{
-
-    flex:1;
-
-    overflow-y:auto;
-
-    padding:35px;
-    
-    min-width:0;
-}
-
-/* =========================
-   VIEWS
-========================= */
-
-.view{
-
-    display:none;
-}
-
-.view.active{
-
-    display:block;
-}
-
-/* =========================
-   HEADINGS
-========================= */
-
-h2{
-
-    color:var(--primary);
-
-    margin-bottom:25px;
-
-    font-size:32px;
-
-    text-shadow:
-    0 0 10px rgba(0,212,255,.3);
+    background:     var(--bg);
+    color:          var(--text);
+    font-family:    var(--font);
+    overflow-x:     hidden;
+    min-height:     100vh;
+    line-height:    1.6;
+    text-rendering: optimizeLegibility;
 }
 
 /* =========================
@@ -201,18 +156,75 @@ h2{
 ========================= */
 
 ::-webkit-scrollbar{
-
-    width:8px;
+    width: 6px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-track{
-
-    background:#111827;
+    background: var(--bg);
 }
 
 ::-webkit-scrollbar-thumb{
+    background:    var(--primary);
+    border-radius: 10px;
+    opacity:       0.7;
+}
 
-    background:var(--primary);
+::-webkit-scrollbar-thumb:hover{
+    opacity: 1;
+}
 
-    border-radius:10px;
+/* =========================
+   SELECTION
+========================= */
+
+::selection{
+    background: var(--primary-dim);
+    color:      var(--primary);
+}
+
+/* =========================
+   TYPOGRAPHY
+========================= */
+
+h1, h2, h3, h4{
+    line-height: 1.3;
+}
+
+h2{
+    color:       var(--primary);
+    font-size:   28px;
+    margin-bottom: 6px;
+    text-shadow: 0 0 20px var(--primary-glow);
+}
+
+h3{
+    color:       var(--text);
+    font-size:   16px;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+p{
+    color:       var(--muted-light);
+    font-size:   14px;
+    margin-bottom: 8px;
+}
+
+code{
+    font-family:      var(--font-mono);
+    background:       var(--panel-light);
+    padding:          2px 6px;
+    border-radius:    4px;
+    font-size:        13px;
+    color:            var(--primary);
+}
+
+a{
+    color:            var(--primary);
+    text-decoration:  none;
+}
+
+a:hover{
+    text-decoration: underline;
 }

@@ -1,737 +1,698 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" data-theme="cyber">
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlackBox - CTF Toolkit</title>
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>BlackBox</title>
-
-    <!-- CSS Files -->
+    <!-- CSS -->
     <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/outputs.css">
-    <link rel="stylesheet" href="css/crypto-tools.css">
-    <link rel="stylesheet" href="css/web-tools.css">
-
-    <!-- External Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
-
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/responsive.css">
 </head>
-
 <body>
 
 <div class="app">
 
-    <!-- SIDEBAR -->
+    <!-- Inline SVG sprite for icons -->
+    <svg aria-hidden="true" style="display:none">
+        <symbol id="icon-home" viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V9.5z" fill="currentColor"/></symbol>
+        <symbol id="icon-globe" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2v4m0 8v4M4 12h4m8 0h4M6.3 6.3l2.8 2.8M15 15l2.8 2.8M6.3 17.7l2.8-2.8M15 9l2.8-2.8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+        <symbol id="icon-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2" ry="2" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M8 10V8a4 4 0 0 1 8 0v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></symbol>
+        <symbol id="icon-zap" viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8L21 10h-7l-1-8z" fill="currentColor"/></symbol>
+        <symbol id="icon-gear" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7z" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M19.4 15a1.8 1.8 0 0 0 .3 2l1.6 1.6-2 2-1.6-1.6a1.8 1.8 0 0 0-2 .3l-.5 1.9h-2l-.5-1.9a1.8 1.8 0 0 0-2-.3L6.7 20l-2-2 1.6-1.6a1.8 1.8 0 0 0 .3-2L4 12V10l1.9-.5a1.8 1.8 0 0 0 .3-2L5 5.9 7 4l1.6 1.6a1.8 1.8 0 0 0 2-.3L12 4h2l.5 1.9a1.8 1.8 0 0 0 2 .3L18.1 4 20 6l-1.6 1.6a1.8 1.8 0 0 0-.3 2L20 10v2l-1.9.5a1.8 1.8 0 0 0-.7 1.5z" fill="currentColor"/></symbol>
+        <symbol id="icon-microscope" viewBox="0 0 24 24"><path d="M6 21h12" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M10 11a4 4 0 1 1 4 4" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7 21l3-3" stroke="currentColor" stroke-width="1.2"/></symbol>
+        <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="1.5" fill="none"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+        <symbol id="icon-dice" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="1.2" fill="none"/><circle cx="8.5" cy="8.5" r="1" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1" fill="currentColor"/><circle cx="8.5" cy="15.5" r="1" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1" fill="currentColor"/></symbol>
+        <symbol id="icon-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.2" fill="none"/><line x1="12" y1="8" x2="12" y2="8.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M11 12h1v4h1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+        <symbol id="icon-key" viewBox="0 0 24 24"><path d="M3 11a6 6 0 1 1 8.49 5.11L21 21l-2 2-4.51-4.51A6 6 0 0 1 3 11z" fill="currentColor"/></symbol>
+        <symbol id="icon-flask" viewBox="0 0 24 24"><path d="M7 2h10v2l-3 6v6a3 3 0 0 1-6 0v-6L7 4V2z" stroke="currentColor" stroke-width="1.2" fill="none"/></symbol>
+        <symbol id="icon-cookie" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 9.95 11.11A4 4 0 0 1 12 2z" fill="currentColor"/></symbol>
+        <symbol id="icon-link" viewBox="0 0 24 24"><path d="M10 14a5 5 0 0 1 0-7l2-2a5 5 0 0 1 7 7l-1 1" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M14 10a5 5 0 0 1 0 7l-2 2a5 5 0 0 1-7-7l1-1" stroke="currentColor" stroke-width="1.4" fill="none"/></symbol>
+        <symbol id="icon-clipboard" viewBox="0 0 24 24"><path d="M16 4h-2.18A2 2 0 0 0 12 3a2 2 0 0 0-1.82 1H8a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z" stroke="currentColor" stroke-width="1.2" fill="none"/></symbol>
+        <symbol id="icon-tag" viewBox="0 0 24 24"><path d="M20 10v6a2 2 0 0 1-2 2h-6l-8-8 8-8h6a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="1.2" fill="none"/></symbol>
+        <symbol id="icon-bomb" viewBox="0 0 24 24"><circle cx="12" cy="13" r="6" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M8 7l-2-2" stroke="currentColor" stroke-width="1.2"/></symbol>
+        <symbol id="icon-wrench" viewBox="0 0 24 24"><path d="M14 3l7 7-4 4-7-7" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M11 13a5 5 0 0 1-7 7" stroke="currentColor" stroke-width="1.2" fill="none"/></symbol>
+        <symbol id="icon-pulse" viewBox="0 0 24 24"><path d="M3 12h4l2-6 4 12 2-6h4" stroke="currentColor" stroke-width="1.2" fill="none"/></symbol>
+        <symbol id="icon-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="1.2" fill="none"/></symbol>
+    </svg>
 
+    <!-- ===================== SIDEBAR ===================== -->
     <aside class="sidebar">
 
-        <div>
-
-            <h1>BLACKBOX</h1>
-
-            <p class="tagline">
-
-                CTF Toolkit
-
-            </p>
-
-            <button onclick="showView('dashboard')">
-                🏠 Dashboard
-            </button>
-
-            <button onclick="showView('web-dashboard')">
-                🌐 Web Exploitation
-            </button>
-
-            <button onclick="showView('crypto-dashboard')">
-                🔐 Cryptography
-            </button>
-
-            <button onclick="showView('pwn-dashboard')">
-                💣 Binary Exploitation
-            </button>
-
-            <button onclick="showView('reverse-dashboard')">
-                ⚙ Reverse Engineering
-            </button>
-
-            <button onclick="showView('forensics-dashboard')">
-                🧪 Forensics
-            </button>
-
-            <button onclick="showView('osint-dashboard')">
-                🔍 OSINT
-            </button>
-
-            <button onclick="showView('misc-dashboard')">
-                🎲 Miscellaneous
-            </button>
-
-            <button onclick="showView('about')">
-                ℹ About
-            </button>
-
+        <div class="sidebar-header">
+            <div class="sidebar-logo">BLACKBOX</div>
+            <div class="sidebar-tagline">CTF Toolkit</div>
         </div>
 
-        <div class="version">
+        <div class="sidebar-search">
+            <input type="text" id="sidebarSearch" placeholder="Search tools...">
+        </div>
 
-            BlackBox v3.1
+        <nav class="sidebar-nav">
 
+            <div class="nav-label">Main</div>
+
+            <button class="nav-btn active" onclick="showView('dashboard')">
+                <span class="nav-icon"><svg class="icon"><use xlink:href="#icon-home"></use></svg></span> Dashboard
+            </button>
+
+            <div class="nav-label">Categories</div>
+
+            <button class="nav-btn" onclick="showView('web')">
+                <span class="nav-icon"><svg class="icon"><use xlink:href="#icon-globe"></use></svg></span> Web Exploitation
+                <span class="nav-badge">8</span>
+            </button>
+
+            <button class="nav-btn" onclick="showView('crypto')">
+                <span class="nav-icon"><svg class="icon"><use xlink:href="#icon-lock"></use></svg></span> Cryptography
+                <span class="nav-badge">15</span>
+            </button>
+
+            <button class="nav-btn" onclick="showView('binary')">
+                <span class="nav-icon"><svg class="icon"><use xlink:href="#icon-zap"></use></svg></span> Binary Exploitation
+                <span class="nav-badge">6</span>
+            </button>
+
+            <button class="nav-btn" onclick="showView('reversing')">
+                <span class="nav-icon"><svg class="icon"><use xlink:href="#icon-gear"></use></svg></span> Reverse Engineering
+                <span class="nav-badge">6</span>
+            </button>
+
+            <button class="nav-btn" onclick="showView('forensics')">
+                <span class="nav-icon"><svg class="icon"><use xlink:href="#icon-microscope"></use></svg></span> Forensics
+                <span class="nav-badge">7</span>
+            </button>
+
+            <button class="nav-btn" onclick="showView('osint')">
+                <span class="nav-icon"><svg class="icon"><use xlink:href="#icon-search"></use></svg></span> OSINT
+                <span class="nav-badge">6</span>
+            </button>
+
+            <button class="nav-btn" onclick="showView('misc')">
+                <span class="nav-icon"><svg class="icon"><use xlink:href="#icon-dice"></use></svg></span> Miscellaneous
+                <span class="nav-badge">7</span>
+            </button>
+
+            <div class="nav-label">Info</div>
+
+            <button class="nav-btn" onclick="showView('about')">
+                <span class="nav-icon"><svg class="icon"><use xlink:href="#icon-info"></use></svg></span> About
+            </button>
+
+        </nav>
+
+        <div class="sidebar-footer">
+            <span class="version-tag">v2.0.0</span>
+            <div class="theme-btns">
+                <div class="theme-dot cyber active"    onclick="setTheme('cyber')"    title="Cyber"></div>
+                <div class="theme-dot hacker"          onclick="setTheme('hacker')"   title="Hacker"></div>
+                <div class="theme-dot midnight"        onclick="setTheme('midnight')" title="Midnight"></div>
+                <div class="theme-dot pink"            onclick="setTheme('pink')"     title="Pink"></div>
+                <div class="theme-dot yellow"          onclick="setTheme('yellow')"   title="Yellow"></div>
+            </div>
         </div>
 
     </aside>
 
-    <!-- CONTENT -->
-
+    <!-- ===================== MAIN ===================== -->
     <main class="content">
 
-        <!-- DASHBOARD -->
+        <!-- TOP BAR -->
+        <div class="topbar">
+            <button class="topbar-back" type="button" onclick="goBack()">Back</button>
+            <div class="topbar-search">
+                <input type="text" id="globalSearch" placeholder="Search any tool... (Press / to focus)">
+                <div class="search-results" id="searchResults"></div>
+            </div>
+            <div class="topbar-shortcuts">
+                <kbd>Ctrl</kbd>+<kbd>Enter</kbd> Run &nbsp;
+                <kbd>/</kbd> Search &nbsp;
+                <kbd>Esc</kbd> Back
+            </div>
+        </div>
 
-        <section id="dashboard"
-                 class="view active">
+        <div class="page">
 
-            <h2>Dashboard</h2>
+        <!-- =================== DASHBOARD =================== -->
+        <div class="view active" id="dashboard">
+            <div class="view-header">
+                <h2><svg class="icon"><use xlink:href="#icon-home"></use></svg> Dashboard</h2>
+                <p>Your ultimate CTF toolkit - all tools in one place</p>
+            </div>
 
             <div class="card-grid">
 
-                <div class="card"
-                     onclick="showView('web-dashboard')">
-
-                    🌐 Web Exploitation
-
-                    <span>
-                        8 Available Tools
-                    </span>
-
-                </div>
-                <div class="card"
-                     onclick="showView('crypto-dashboard')">
-
-                    🔐 Cryptography
-
-                    <span>
-                        5 Available Tools
-                    </span>
-
+                <div class="card" onclick="showView('web')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-globe"></use></svg></div>
+                    <div class="card-title">Web Exploitation</div>
+                    <p class="card-desc">JWT, Cookies, Headers, Payloads, CSRF, SSRF and more</p>
+                    <span class="card-badge available">8 Tools</span>
                 </div>
 
-                <div class="card"
-                     onclick="showView('pwn-dashboard')">
-
-                    💣 Binary Exploitation
-
-                    <span>
-                        Coming Soon
-                    </span>
-
+                <div class="card" onclick="showView('crypto')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-lock"></use></svg></div>
+                    <div class="card-title">Cryptography</div>
+                    <p class="card-desc">Hashing, ciphers, encoding, RSA, AES and frequency analysis</p>
+                    <span class="card-badge available">15 Tools</span>
                 </div>
 
-                <div class="card"
-                     onclick="showView('reverse-dashboard')">
-
-                    ⚙ Reverse Engineering
-
-                    <span>
-                        Coming Soon
-                    </span>
-
+                <div class="card" onclick="showView('binary')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-zap"></use></svg></div>
+                    <div class="card-title">Binary Exploitation</div>
+                    <p class="card-desc">Pattern gen, shellcode, ELF parser, ROP reference</p>
+                    <span class="card-badge available">6 Tools</span>
                 </div>
 
-                <div class="card"
-                     onclick="showView('forensics-dashboard')">
-
-                    🧪 Forensics
-
-                    <span>
-                        Coming Soon
-                    </span>
-
+                <div class="card" onclick="showView('reversing')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-gear"></use></svg></div>
+                    <div class="card-title">Reverse Engineering</div>
+                    <p class="card-desc">Hex viewer, strings extractor, magic bytes, regex tester</p>
+                    <span class="card-badge available">6 Tools</span>
                 </div>
 
-                <div class="card"
-                     onclick="showView('osint-dashboard')">
-
-                    🔍 OSINT
-
-                    <span>
-                        Coming Soon
-                    </span>
-
+                <div class="card" onclick="showView('forensics')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-microscope"></use></svg></div>
+                    <div class="card-title">Forensics</div>
+                    <p class="card-desc">File analysis, metadata, LSB stego, entropy analyzer</p>
+                    <span class="card-badge available">7 Tools</span>
                 </div>
 
-                <div class="card"
-                     onclick="showView('misc-dashboard')">
+                <div class="card" onclick="showView('osint')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-search"></use></svg></div>
+                    <div class="card-title">OSINT</div>
+                    <p class="card-desc">Dork builder, subnet calc, IP converter, username gen</p>
+                    <span class="card-badge available">6 Tools</span>
+                </div>
 
-                    🎲 Miscellaneous
+                <div class="card" onclick="showView('misc')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-dice"></use></svg></div>
+                    <div class="card-title">Miscellaneous</div>
+                    <p class="card-desc">Diff checker, QR codes, Morse code, password gen</p>
+                    <span class="card-badge available">7 Tools</span>
+                </div>
 
-                    <span>
-                        Coming Soon
-                    </span>
+            </div>
+        </div>
 
+        <!-- =================== WEB EXPLOITATION =================== -->
+        <div class="view" id="web">
+            <div class="view-header">
+                <h2><svg class="icon"><use xlink:href="#icon-globe"></use></svg> Web Exploitation</h2>
+                <p>Tools for web-based CTF challenges</p>
+            </div>
+            <div class="card-grid" id="webCards">
+
+                <div class="card" onclick="showTool('jwtDecoder')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-key"></use></svg></div>
+                    <div class="card-title">JWT Decoder</div>
+                    <p class="card-desc">Decode and inspect JWT tokens</p>
+                </div>
+
+                <div class="card" onclick="showTool('jwtForger')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-flask"></use></svg></div>
+                    <div class="card-title">JWT Forger</div>
+                    <p class="card-desc">Forge JWT tokens with custom payloads</p>
+                </div>
+
+                <div class="card" onclick="showTool('cookieParser')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-cookie"></use></svg></div>
+                    <div class="card-title">Cookie Parser</div>
+                    <p class="card-desc">Parse and analyze cookie strings</p>
+                </div>
+
+                <div class="card" onclick="showTool('urlParser')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-link"></use></svg></div>
+                    <div class="card-title">URL Parser</div>
+                    <p class="card-desc">Dissect URLs into components</p>
+                </div>
+
+                <div class="card" onclick="showTool('headerParser')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-clipboard"></use></svg></div>
+                    <div class="card-title">Header Parser</div>
+                    <p class="card-desc">Parse HTTP request/response headers</p>
+                </div>
+
+                <div class="card" onclick="showTool('htmlEncoderDecoder')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-tag"></use></svg></div>
+                    <div class="card-title">HTML Encoder/Decoder</div>
+                    <p class="card-desc">Encode and decode HTML entities</p>
+                </div>
+
+                <div class="card" onclick="showTool('payloadLibrary')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-bomb"></use></svg></div>
+                    <div class="card-title">Payload Library</div>
+                    <p class="card-desc">SQLi, XSS, LFI, SSRF, SSTI, XXE payloads</p>
+                </div>
+
+                <div class="card" onclick="showTool('curlBuilder')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-wrench"></use></svg></div>
+                    <div class="card-title">cURL Builder</div>
+                    <p class="card-desc">Build cURL commands visually</p>
                 </div>
 
             </div>
 
-        </section>
+            <!-- TOOL PANELS -->
+            <div id="jwtDecoder"        class="tool-panel" style="display:none"></div>
+            <div id="jwtForger"         class="tool-panel" style="display:none"></div>
+            <div id="cookieParser"      class="tool-panel" style="display:none"></div>
+            <div id="urlParser"         class="tool-panel" style="display:none"></div>
+            <div id="headerParser"      class="tool-panel" style="display:none"></div>
+            <div id="htmlEncoderDecoder" class="tool-panel" style="display:none"></div>
+            <div id="payloadLibrary"    class="tool-panel" style="display:none"></div>
+            <div id="curlBuilder"       class="tool-panel" style="display:none"></div>
+        </div>
 
-        <!-- CRYPTO DASHBOARD -->
+        <!-- =================== CRYPTOGRAPHY =================== -->
+        <div class="view" id="crypto">
+            <div class="view-header">
+                    <h2><svg class="icon"><use xlink:href="#icon-lock"></use></svg> Cryptography</h2>
+                    <p>Hashing, encoding, ciphers and crypto tools</p>
+                </div>
+            <div class="card-grid" id="cryptoCards">
 
-        <section id="crypto-dashboard"
-                 class="view">
-
-            <button class="back-btn"
-                    onclick="showView('dashboard')">
-
-                ← Dashboard
-
-            </button>
-
-            <h2>Cryptography</h2>
-
-            <div class="card-grid">
-
-                <div class="card"
-                     onclick="showView('hash-generator')">
-
-                    🔒 Hash Generator
-
+                <div class="card" onclick="showTool('hashGenerator')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-lock"></use></svg></div>
+                    <div class="card-title">Hash Generator</div>
+                    <p class="card-desc">MD5, SHA1, SHA256, SHA512, SHA3, RIPEMD</p>
                 </div>
 
-                <div class="card"
-                     onclick="showView('hash-cracker')">
-
-                    🔓 Hash Cracker
-
+                <div class="card" onclick="showTool('hashCracker')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-file"></use></svg></div>
+                    <div class="card-title">Hash Cracker</div>
+                    <p class="card-desc">Crack hashes using wordlists</p>
                 </div>
 
-                <div class="card"
-                     onclick="showView('encoding')">
-
-                    🔤 Encoding
-
+                <div class="card" onclick="showTool('hashIdentifier')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-pulse"></use></svg></div>
+                    <div class="card-title">Hash Identifier</div>
+                    <p class="card-desc">Identify hash types automatically</p>
                 </div>
 
-                <div class="card"
-                     onclick="showView('decoding')">
-
-                    🔓 Decoding
-
+                <div class="card" onclick="showTool('encoder')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-file"></use></svg></div>
+                    <div class="card-title">Encoder</div>
+                    <p class="card-desc">Base16/32/58/62/64/85, Hex, Binary, URL</p>
                 </div>
 
-                <div class="card"
-                     onclick="showView('identifier')">
+                <div class="card" onclick="showTool('decoder')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-file"></use></svg></div>
+                    <div class="card-title">Decoder</div>
+                    <p class="card-desc">Decode all common encodings</p>
+                </div>
 
-                    🕵 Identifier
+                <div class="card" onclick="showTool('caesarCipher')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-pulse"></use></svg></div>
+                    <div class="card-title">Caesar / ROT</div>
+                    <p class="card-desc">Caesar cipher, ROT13, ROT47 with brute force</p>
+                </div>
 
+                <div class="card" onclick="showTool('vigenereCipher')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-key"></use></svg></div>
+                    <div class="card-title">Vigenere Cipher</div>
+                    <p class="card-desc">Encrypt, decrypt and crack Vigenere</p>
+                </div>
+
+                <div class="card" onclick="showTool('xorTool')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-pulse"></use></svg></div>
+                    <div class="card-title">XOR Tool</div>
+                    <p class="card-desc">Single and multi-byte XOR operations</p>
+                </div>
+
+                <div class="card" onclick="showTool('atbashCipher')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-pulse"></use></svg></div>
+                    <div class="card-title">Atbash Cipher</div>
+                    <p class="card-desc">Atbash and Rail Fence cipher</p>
+                </div>
+
+                <div class="card" onclick="showTool('frequencyAnalyzer')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-pulse"></use></svg></div>
+                    <div class="card-title">Frequency Analyzer</div>
+                    <p class="card-desc">Analyze character frequency for cipher cracking</p>
+                </div>
+
+                <div class="card" onclick="showTool('rsaTool')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-file"></use></svg></div>
+                    <div class="card-title">RSA Tool</div>
+                    <p class="card-desc">RSA encrypt, decrypt, key inspector</p>
+                </div>
+
+                <div class="card" onclick="showTool('aesTool')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-file"></use></svg></div>
+                    <div class="card-title">AES Tool</div>
+                    <p class="card-desc">AES encrypt and decrypt</p>
+                </div>
+
+                <div class="card" onclick="showTool('baseConverter')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-pulse"></use></svg></div>
+                    <div class="card-title">Base Converter</div>
+                    <p class="card-desc">Convert between all number bases</p>
+                </div>
+
+                <div class="card" onclick="showTool('hmacGenerator')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-pulse"></use></svg></div>
+                    <div class="card-title">HMAC Generator</div>
+                    <p class="card-desc">Generate HMAC signatures</p>
+                </div>
+
+                <div class="card" onclick="showTool('asciiConverter')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-pulse"></use></svg></div>
+                    <div class="card-title">ASCII Converter</div>
+                    <p class="card-desc">ASCII, Decimal, Hex and Binary</p>
                 </div>
 
             </div>
 
-        </section>
+            <!-- TOOL PANELS -->
+            <div id="hashGenerator"    class="tool-panel" style="display:none"></div>
+            <div id="hashCracker"      class="tool-panel" style="display:none"></div>
+            <div id="hashIdentifier"   class="tool-panel" style="display:none"></div>
+            <div id="encoder"          class="tool-panel" style="display:none"></div>
+            <div id="decoder"          class="tool-panel" style="display:none"></div>
+            <div id="caesarCipher"     class="tool-panel" style="display:none"></div>
+            <div id="vigenereCipher"   class="tool-panel" style="display:none"></div>
+            <div id="xorTool"          class="tool-panel" style="display:none"></div>
+            <div id="atbashCipher"     class="tool-panel" style="display:none"></div>
+            <div id="frequencyAnalyzer" class="tool-panel" style="display:none"></div>
+            <div id="rsaTool"          class="tool-panel" style="display:none"></div>
+            <div id="aesTool"          class="tool-panel" style="display:none"></div>
+            <div id="baseConverter"    class="tool-panel" style="display:none"></div>
+            <div id="hmacGenerator"    class="tool-panel" style="display:none"></div>
+            <div id="asciiConverter"   class="tool-panel" style="display:none"></div>
+        </div>
 
-        <!-- HASH GENERATOR -->
-
-        <section id="hash-generator"
-                 class="view">
-
-            <button class="back-btn"
-                    onclick="showView('crypto-dashboard')">
-
-                ← Cryptography
-
-            </button>
-
-            <h2>Hash Generator</h2>
-                <!-- Tool container: input, controls, and output for Hash Generator -->
-                <div class="tool">
-                    <textarea id="hashText" placeholder="Enter text..."></textarea>
-
-                    <div class="tool-controls">
-                        <div class="button-group">
-                            <button onclick="generateHash('md5')">MD5</button>
-                            <button onclick="generateHash('sha1')">SHA1</button>
-                            <button onclick="generateHash('sha256')">SHA256</button>
-                            <button onclick="generateHash('sha512')">SHA512</button>
-                        </div>
-                    </div>
-
-                    <div class="tool-output" id="hashOutput"></div>
-                </div>
-
-        </section>
-
-        <!-- HASH CRACKER -->
-
-        <section id="hash-cracker"
-                 class="view">
-
-            <button class="back-btn"
-                    onclick="showView('crypto-dashboard')">
-
-                ← Cryptography
-
-            </button>
-
-            <h2>Hash Cracker</h2>
-                <!-- Tool container: inputs and controls for Hash Cracker -->
-                <div class="tool">
-                    <!-- Primary hash input -->
-                    <textarea id="crackInput" placeholder="Paste hash..."></textarea>
-
-                    <!-- Wordlist selection and optional inputs. Note: JS may read these by id -->
-                    <div class="tool-controls">
-                        <select id="wordlistSelect">
-                            <option value="all">All Wordlists</option>
-                            <option value="common">Common Passwords</option>
-                            <option value="rockyou">RockYou Mini</option>
-                            <option value="ctf">CTF Common</option>
-                        </select>
-
-                        <textarea id="wordlistInput" placeholder="Custom words (optional)"></textarea>
-
-                        <input type="file" id="wordlistFile">
-
-                        <div style="margin-top:8px;">
-                            <button onclick="crackHash()">Crack Hash</button>
-                        </div>
-                    </div>
-
-                    <!-- Status and output containers -->
-                    <div class="tool-output">
-                        <div id="crackStatus"></div>
-                        <div id="crackOutput"></div>
-                    </div>
-                </div>
-
-        </section>
-
-        <!-- ENCODING -->
-
-        <section id="encoding"
-                 class="view">
-
-            <button class="back-btn"
-                    onclick="showView('crypto-dashboard')">
-
-                ← Cryptography
-
-            </button>
-
-            <h2>Encoding</h2>
-                <!-- Encoding tool: input, actions, output -->
-                <div class="tool">
-                    <textarea id="encodeInput"></textarea>
-
-                    <div class="tool-controls">
-                        <div class="button-group">
-                            <button onclick="encodeBase64()">Base64</button>
-                            <button onclick="encodeHex()">Hex</button>
-                            <button onclick="encodeBinary()">Binary</button>
-                            <button onclick="encodeURL()">URL</button>
-                        </div>
-                    </div>
-
-                    <div class="tool-output" id="encodeOutput"></div>
-                </div>
-
-        </section>
-
-        <!-- DECODING -->
-
-        </section>
-
-        <!-- IDENTIFIER -->
-
-        <section id="identifier"
-                 class="view">
-
-            <button class="back-btn"
-                    onclick="showView('crypto-dashboard')">
-
-                ← Cryptography
-
-            </button>
-
-            <h2>Identifier</h2>
-                <!-- Identifier tool: input and output -->
-                <div class="tool">
-                    <textarea id="analysisInput"></textarea>
-
-                    <div class="tool-controls">
-                        <button onclick="analyzeInput()">Identify</button>
-                    </div>
-
-                    <div class="tool-output" id="analysisOutput"></div>
-                </div>
-
-        </section>
-
-        <!-- PLACEHOLDER CATEGORIES -->
-
-        <section id="web-dashboard" class="view">
-            <button class="back-btn" onclick="showView('dashboard')">← Dashboard</button>
-            <h2>Web Exploitation</h2>
+        <!-- =================== BINARY EXPLOITATION =================== -->
+        <div class="view" id="binary">
+            <div class="view-header">
+                <h2><svg class="icon"><use xlink:href="#icon-zap"></use></svg> Binary Exploitation</h2>
+                <p>Tools for binary and pwn challenges</p>
+            </div>
             <div class="card-grid">
-
-    <div class="card"
-         onclick="showView('jwt-decoder')">
-
-        🔑 JWT Decoder
-
-    </div>
-
-    <div class="card"
-         onclick="showView('cookie-parser')">
-
-        🍪 Cookie Parser
-
-    </div>
-
-    <div class="card"
-         onclick="showView('url-parser')">
-
-        🔗 URL Parser
-
-    </div>
-
-    <div class="card" onclick="showView('header-parser')">
-    📡 HTTP Header Parser
-</div>
-
-<div class="card" onclick="showView('html-tools')">
-    🏷 HTML Encoder / Decoder
-</div>
-
-<div class="card" onclick="showView('jwt-inspector')">
-    🔎 JWT Inspector
-</div>
-
-<div class="card" onclick="showView('payload-library')">
-    📚 Payload Library
-</div>
-
-<div class="card"
-onclick="showView('curl-builder')">
-
-🛠 Request → Curl Builder
-
-</div>
-
-</div>
-        </section>
-        <section id="jwt-decoder"
-         class="view">
-
-    <button class="back-btn"
-            onclick="showView('web-dashboard')">
-
-        ← Web Exploitation
-
-    </button>
-
-    <h2>JWT Decoder</h2>
-
-    <textarea id="jwtInput"
-              placeholder="Paste JWT token"></textarea>
-
-    <button onclick="decodeJWT()">
-
-        Decode JWT
-
-    </button>
-
-    <div id="jwtOutput"></div>
-
-    <!-- Grouping JWT inputs and output to make structure explicit -->
-    <!-- Note: keep `jwtInput` id as JS depends on it -->
-
-</section>
-
-<section id="cookie-parser"
-         class="view">
-
-    <button class="back-btn"
-            onclick="showView('web-dashboard')">
-
-        ← Web Exploitation
-
-    </button>
-
-    <h2>Cookie Parser</h2>
-
-    <textarea id="cookieInput"
-              placeholder="Paste cookie"></textarea>
-
-    <button onclick="parseCookie()">
-
-        Parse Cookie
-
-    </button>
-
-    <div id="cookieOutput"></div>
-
-    <!-- Grouping Cookie Parser inputs and output. `cookieInput` is used by JS. -->
-
-</section>
-
-<section id="url-parser"
-         class="view">
-
-    <button class="back-btn"
-            onclick="showView('web-dashboard')">
-
-        ← Web Exploitation
-
-    </button>
-
-    <h2>URL Parser</h2>
-
-    <textarea id="urlInput"
-              placeholder="Paste URL"></textarea>
-
-    <button onclick="parseURL()">
-
-        Parse URL
-
-    </button>
-
-    <div id="urlOutput"></div>
-
-    <div id="urlParams"></div>
-
-</section>
-
-<section id="header-parser" class="view">
-
-<button class="back-btn"
-onclick="showView('web-dashboard')">
-
-← Web Exploitation
-
-</button>
-
-<h2>HTTP Header Parser</h2>
-
-<textarea id="headerInput"
-placeholder="Paste HTTP headers"></textarea>
-
-<button onclick="parseHeaders()">
-Parse Headers
-</button>
-
-<div id="headerOutput"></div>
-
-</section>
-
-<section id="html-tools" class="view">
-
-<button class="back-btn"
-onclick="showView('web-dashboard')">
-
-← Web Exploitation
-
-</button>
-
-<h2>HTML Encoder / Decoder</h2>
-
-<textarea id="htmlInput"></textarea>
-
-<div class="button-group">
-
-<button onclick="encodeHTML()">
-Encode
-</button>
-
-<button onclick="decodeHTML()">
-Decode
-</button>
-
-</div>
-
-<div id="htmlOutput"></div>
-
-</section>
-
-<section id="jwt-inspector"
-class="view">
-
-<button class="back-btn"
-onclick="showView('web-dashboard')">
-
-← Web Exploitation
-
-</button>
-
-<h2>JWT Inspector</h2>
-
-<textarea id="jwtInspectInput"></textarea>
-
-<button onclick="inspectJWT()">
-Inspect JWT
-</button>
-
-<div id="jwtInspectOutput"></div>
-
-</section>
-
-<section id="payload-library"
-class="view">
-
-<button class="back-btn"
-onclick="showView('web-dashboard')">
-
-← Web Exploitation
-
-</button>
-
-<h2>Payload Library</h2>
-
-<select id="payloadType">
-
-<option value="sqli">
-SQL Injection
-</option>
-
-<option value="xss">
-Cross Site Scripting
-</option>
-
-<option value="lfi">
-LFI
-</option>
-
-<option value="ssrf">
-SSRF
-</option>
-
-<option value="ssti">
-SSTI
-</option>
-
-</select>
-
-<button onclick="loadPayloads()">
-
-Load Payloads
-
-</button>
-
-<div id="payloadOutput"></div>
-
-</section>
-
-<section id="curl-builder"
-class="view">
-
-<button class="back-btn"
-onclick="showView('web-dashboard')">
-
-← Web Exploitation
-
-</button>
-
-<h2>Request → Curl Builder</h2>
-
-<input
-type="text"
-id="curlUrl"
-placeholder="https://example.com/api">
-
-<select id="curlMethod">
-
-<option>GET</option>
-<option>POST</option>
-<option>PUT</option>
-<option>DELETE</option>
-
-</select>
-
-<textarea
-id="curlHeaders"
-placeholder="Headers (one per line)
-Authorization: Bearer token
-Content-Type: application/json"></textarea>
-
-<textarea
-id="curlBody"
-placeholder="Request Body"></textarea>
-
-<button onclick="buildCurl()">
-
-Generate Curl
-
-</button>
-
-<div id="curlOutput"></div>
-
-</section>
-
-        <section id="pwn-dashboard" class="view">
-            <button class="back-btn" onclick="showView('dashboard')">← Dashboard</button>
-            <h2>Binary Exploitation</h2>
-            <div class="coming-soon">ROP Helper • Endian Converter • Shellcode Tools</div>
-        </section>
-
-        <section id="reverse-dashboard" class="view">
-            <button class="back-btn" onclick="showView('dashboard')">← Dashboard</button>
-            <h2>Reverse Engineering</h2>
-            <div class="coming-soon">String Extractor • Hex Viewer • Assembly Reference</div>
-        </section>
-
-        <section id="forensics-dashboard" class="view">
-            <button class="back-btn" onclick="showView('dashboard')">← Dashboard</button>
-            <h2>Forensics</h2>
-            <div class="coming-soon">File Hasher • Metadata Viewer • Magic Numbers</div>
-        </section>
-
-        <section id="osint-dashboard" class="view">
-            <button class="back-btn" onclick="showView('dashboard')">← Dashboard</button>
-            <h2>OSINT</h2>
-            <div class="coming-soon">WHOIS • Username Search • Metadata Analysis</div>
-        </section>
-
-        <section id="misc-dashboard" class="view">
-            <button class="back-btn" onclick="showView('dashboard')">← Dashboard</button>
-            <h2>Miscellaneous</h2>
-            <div class="coming-soon">Timestamp Converter • Regex Tester • Text Utilities</div>
-        </section>
-
-        <!-- ABOUT -->
-
-        <section id="about"
-                 class="view">
-
-            <h2>About BlackBox</h2>
-
-            <p>
-                BlackBox is a modular toolkit designed for Capture The Flag players.
-            </p>
-
-            <br>
-
-            <p>
-                Built by Mishen
-            </p>
-
-            <p>
-                Team: Bug Bouncers
-            </p>
-
-        </section>
-
+                <div class="card" onclick="showTool('patternGen')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-pulse"></use></svg></div>
+                    <div class="card-title">Pattern Generator</div>
+                    <p class="card-desc">Cyclic pattern for buffer overflow offset finding</p>
+                </div>
+                <div class="card" onclick="showTool('shellcodeEncoder')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-file"></use></svg></div>
+                    <div class="card-title">Shellcode Encoder</div>
+                    <p class="card-desc">Encode/decode shellcode in multiple formats</p>
+                </div>
+                <div class="card" onclick="showTool('stringHexConverter')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-pulse"></use></svg></div>
+                    <div class="card-title">String / Hex</div>
+                    <p class="card-desc">Convert strings to hex and back</p>
+                </div>
+                <div class="card" onclick="showTool('elfParser')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-file"></use></svg></div>
+                    <div class="card-title">ELF Header Parser</div>
+                    <p class="card-desc">Parse ELF binary headers from file upload</p>
+                </div>
+                <div class="card" onclick="showTool('ropReference')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-file"></use></svg></div>
+                    <div class="card-title">ROP Reference</div>
+                    <p class="card-desc">Common ROP gadgets and techniques</p>
+                </div>
+                <div class="card" onclick="showTool('asmConverter')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-zap"></use></svg></div>
+                    <div class="card-title">Assembly Reference</div>
+                    <p class="card-desc">Common x86/x64 assembly instructions</p>
+                </div>
+            </div>
+            <div id="patternGen"        class="tool-panel" style="display:none"></div>
+            <div id="shellcodeEncoder"  class="tool-panel" style="display:none"></div>
+            <div id="stringHexConverter" class="tool-panel" style="display:none"></div>
+            <div id="elfParser"         class="tool-panel" style="display:none"></div>
+            <div id="ropReference"      class="tool-panel" style="display:none"></div>
+            <div id="asmConverter"      class="tool-panel" style="display:none"></div>
+        </div>
+
+        <!-- =================== REVERSE ENGINEERING =================== -->
+        <div class="view" id="reversing">
+            <div class="view-header">
+                <h2><svg class="icon"><use xlink:href="#icon-gear"></use></svg> Reverse Engineering</h2>
+                <p>Tools for reversing and analyzing binaries</p>
+            </div>
+            <div class="card-grid">
+                <div class="card" onclick="showTool('hexViewer')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-pulse"></use></svg></div>
+                    <div class="card-title">Hex Viewer</div>
+                    <p class="card-desc">View any file as hex dump</p>
+                </div>
+                <div class="card" onclick="showTool('stringsExtractor')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-file"></use></svg></div>
+                    <div class="card-title">Strings Extractor</div>
+                    <p class="card-desc">Extract printable strings from binary files</p>
+                </div>
+                <div class="card" onclick="showTool('magicBytes')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-pulse"></use></svg></div>
+                    <div class="card-title">Magic Bytes ID</div>
+                    <p class="card-desc">Identify file types by magic bytes</p>
+                </div>
+                <div class="card" onclick="showTool('regexTester')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-pulse"></use></svg></div>
+                    <div class="card-title">Regex Tester</div>
+                    <p class="card-desc">Test and debug regular expressions</p>
+                </div>
+                <div class="card" onclick="showTool('deobfuscator')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-pulse"></use></svg></div>
+                    <div class="card-title">JS Deobfuscator</div>
+                    <p class="card-desc">Basic JavaScript deobfuscation</p>
+                </div>
+                <div class="card" onclick="showTool('disasmRef')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-file"></use></svg></div>
+                    <div class="card-title">Disasm Reference</div>
+                    <p class="card-desc">x86/x64 instruction reference guide</p>
+                </div>
+            </div>
+            <div id="hexViewer"       class="tool-panel" style="display:none"></div>
+            <div id="stringsExtractor" class="tool-panel" style="display:none"></div>
+            <div id="magicBytes"      class="tool-panel" style="display:none"></div>
+            <div id="regexTester"     class="tool-panel" style="display:none"></div>
+            <div id="deobfuscator"    class="tool-panel" style="display:none"></div>
+            <div id="disasmRef"       class="tool-panel" style="display:none"></div>
+        </div>
+
+        <!-- =================== FORENSICS =================== -->
+        <div class="view" id="forensics">
+            <div class="view-header">
+                <h2><svg class="icon"><use xlink:href="#icon-microscope"></use></svg> Forensics</h2>
+                <p>File analysis and forensics tools</p>
+            </div>
+            <div class="card-grid">
+                <div class="card" onclick="showTool('hexDump')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-file"></use></svg></div>
+                    <div class="card-title">Hex Dump</div>
+                    <p class="card-desc">Full hex dump of uploaded files</p>
+                </div>
+                <div class="card" onclick="showTool('metadataExtractor')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-file"></use></svg></div>
+                    <div class="card-title">Metadata Extractor</div>
+                    <p class="card-desc">Extract EXIF and metadata from images</p>
+                </div>
+                <div class="card" onclick="showTool('lsbDetector')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-pulse"></use></svg></div>
+                    <div class="card-title">LSB Stego Detector</div>
+                    <p class="card-desc">Detect LSB steganography in images</p>
+                </div>
+                <div class="card" onclick="showTool('entropyAnalyzer')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-pulse"></use></svg></div>
+                    <div class="card-title">Entropy Analyzer</div>
+                    <p class="card-desc">Calculate file entropy to detect encryption</p>
+                </div>
+                <div class="card" onclick="showTool('pngAnalyzer')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-file"></use></svg></div>
+                    <div class="card-title">PNG Chunk Analyzer</div>
+                    <p class="card-desc">Inspect PNG file chunks</p>
+                </div>
+                <div class="card" onclick="showTool('fileHasher')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-tag"></use></svg></div>
+                    <div class="card-title">File Hasher</div>
+                    <p class="card-desc">Calculate hash of uploaded files</p>
+                </div>
+                <div class="card" onclick="showTool('binwalkRef')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-file"></use></svg></div>
+                    <div class="card-title">Forensics Reference</div>
+                    <p class="card-desc">Common forensics commands and techniques</p>
+                </div>
+            </div>
+            <div id="hexDump"            class="tool-panel" style="display:none"></div>
+            <div id="metadataExtractor"  class="tool-panel" style="display:none"></div>
+            <div id="lsbDetector"        class="tool-panel" style="display:none"></div>
+            <div id="entropyAnalyzer"    class="tool-panel" style="display:none"></div>
+            <div id="pngAnalyzer"        class="tool-panel" style="display:none"></div>
+            <div id="fileHasher"         class="tool-panel" style="display:none"></div>
+            <div id="binwalkRef"         class="tool-panel" style="display:none"></div>
+        </div>
+
+        <!-- =================== OSINT =================== -->
+        <div class="view" id="osint">
+            <div class="view-header">
+                <h2><svg class="icon"><use xlink:href="#icon-search"></use></svg> OSINT</h2>
+                <p>Open source intelligence tools</p>
+            </div>
+            <div class="card-grid">
+                <div class="card" onclick="showTool('dorkBuilder')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-file"></use></svg></div>
+                    <div class="card-title">Google Dork Builder</div>
+                    <p class="card-desc">Build powerful Google dork queries</p>
+                </div>
+                <div class="card" onclick="showTool('subnetCalc')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-globe"></use></svg></div>
+                    <div class="card-title">Subnet Calculator</div>
+                    <p class="card-desc">CIDR and subnet calculations</p>
+                </div>
+                <div class="card" onclick="showTool('ipConverter')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-file"></use></svg></div>
+                    <div class="card-title">IP Converter</div>
+                    <p class="card-desc">IP, Integer, Hex and Binary</p>
+                </div>
+                <div class="card" onclick="showTool('usernameGen')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-file"></use></svg></div>
+                    <div class="card-title">Username Generator</div>
+                    <p class="card-desc">Generate username variations for OSINT</p>
+                </div>
+                <div class="card" onclick="showTool('shodanBuilder')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-pulse"></use></svg></div>
+                    <div class="card-title">Shodan Query Builder</div>
+                    <p class="card-desc">Build Shodan search queries</p>
+                </div>
+                <div class="card" onclick="showTool('emailGuesser')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-file"></use></svg></div>
+                    <div class="card-title">Email Format Guesser</div>
+                    <p class="card-desc">Guess corporate email formats</p>
+                </div>
+            </div>
+            <div id="dorkBuilder"   class="tool-panel" style="display:none"></div>
+            <div id="subnetCalc"    class="tool-panel" style="display:none"></div>
+            <div id="ipConverter"   class="tool-panel" style="display:none"></div>
+            <div id="usernameGen"   class="tool-panel" style="display:none"></div>
+            <div id="shodanBuilder" class="tool-panel" style="display:none"></div>
+            <div id="emailGuesser"  class="tool-panel" style="display:none"></div>
+        </div>
+
+        <!-- =================== MISCELLANEOUS =================== -->
+        <div class="view" id="misc">
+            <div class="view-header">
+                <h2><svg class="icon"><use xlink:href="#icon-dice"></use></svg> Miscellaneous</h2>
+                <p>Useful utility tools for CTF</p>
+            </div>
+            <div class="card-grid">
+                <div class="card" onclick="showTool('diffChecker')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-file"></use></svg></div>
+                    <div class="card-title">Diff Checker</div>
+                    <p class="card-desc">Compare two texts side by side</p>
+                </div>
+                <div class="card" onclick="showTool('timestampConverter')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-pulse"></use></svg></div>
+                    <div class="card-title">Timestamp Converter</div>
+                    <p class="card-desc">Unix, UTC, local time conversions</p>
+                </div>
+                <div class="card" onclick="showTool('qrTool')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-file"></use></svg></div>
+                    <div class="card-title">QR Code Tool</div>
+                    <p class="card-desc">Read and generate QR codes</p>
+                </div>
+                <div class="card" onclick="showTool('morseTool')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-pulse"></use></svg></div>
+                    <div class="card-title">Morse Code</div>
+                    <p class="card-desc">Encode and decode Morse code</p>
+                </div>
+                <div class="card" onclick="showTool('passwordGen')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-key"></use></svg></div>
+                    <div class="card-title">Password Generator</div>
+                    <p class="card-desc">Generate strong passwords with options</p>
+                </div>
+                <div class="card" onclick="showTool('wordlistGen')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-clipboard"></use></svg></div>
+                    <div class="card-title">Wordlist Generator</div>
+                    <p class="card-desc">Generate wordlist mutations from a word</p>
+                </div>
+                <div class="card" onclick="showTool('uuidTool')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-dice"></use></svg></div>
+                    <div class="card-title">UUID Tool</div>
+                    <p class="card-desc">Generate and analyze UUIDs</p>
+                </div>
+            </div>
+            <div id="diffChecker"        class="tool-panel" style="display:none"></div>
+            <div id="timestampConverter" class="tool-panel" style="display:none"></div>
+            <div id="qrTool"             class="tool-panel" style="display:none"></div>
+            <div id="morseTool"          class="tool-panel" style="display:none"></div>
+            <div id="passwordGen"        class="tool-panel" style="display:none"></div>
+            <div id="wordlistGen"        class="tool-panel" style="display:none"></div>
+            <div id="uuidTool"           class="tool-panel" style="display:none"></div>
+        </div>
+
+        <!-- =================== ABOUT =================== -->
+        <div class="view" id="about">
+            <div class="view-header">
+                <h2><svg class="icon"><use xlink:href="#icon-info"></use></svg> About BlackBox</h2>
+                <p>Your ultimate CTF companion</p>
+            </div>
+            <div id="about">
+                <div class="about-card">
+                    <h3><svg class="icon"><use xlink:href="#icon-pulse"></use></svg> What is BlackBox?</h3>
+                    <p>BlackBox is an all-in-one browser-based CTF toolkit built for security researchers and CTF players. No installation needed - everything runs in your browser.</p>
+                    <p>Built with pure HTML, CSS and JavaScript. No backend. Works offline.</p>
+                </div>
+                <div class="about-card">
+                    <h3><svg class="icon"><use xlink:href="#icon-zap"></use></svg> Features</h3>
+                    <ul class="feature-list">
+                        <li>50+ tools across 7 categories</li>
+                        <li>Global search - find any tool instantly</li>
+                        <li>Copy button on every output</li>
+                        <li>Input history saved locally</li>
+                        <li>3 themes - Cyber, Hacker, Midnight</li>
+                        <li>Keyboard shortcuts for power users</li>
+                        <li>Fully responsive - works on mobile</li>
+                        <li>100% offline capable</li>
+                    </ul>
+                </div>
+                <div class="about-card">
+                    <h3><svg class="icon"><use xlink:href="#icon-file"></use></svg> Keyboard Shortcuts</h3>
+                    <ul class="feature-list">
+                        <li><kbd>Ctrl</kbd> + <kbd>Enter</kbd> - Run current tool</li>
+                        <li><kbd>/</kbd> - Focus search bar</li>
+                        <li><kbd>Esc</kbd> - Go back to category</li>
+                        <li><kbd>Ctrl</kbd> + <kbd>C</kbd> - Copy output (when focused)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        </div><!-- end .page -->
     </main>
-
 </div>
 
-<!-- App Scripts -->
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- LIBS -->
+<script src="assets/libs/crypto-js.min.js"></script>
+<script src="assets/libs/jsqr.min.js"></script>
+<script src="assets/libs/qrcode.min.js"></script>
+<script src="assets/libs/exifr.min.js"></script>
+<script src="assets/libs/diff.min.js"></script>
+
+<!-- CORE -->
+<script src="js/global.js"></script>
+
+<!-- TOOLS -->
+<script src="js/tools/crypto.js"></script>
+<script src="js/tools/encoding.js"></script>
+<script src="js/tools/ciphers.js"></script>
+<script src="js/tools/web.js"></script>
+<script src="js/tools/binary.js"></script>
+<script src="js/tools/reversing.js"></script>
+<script src="js/tools/forensics.js"></script>
+<script src="js/tools/osint.js"></script>
+<script src="js/tools/misc.js"></script>
+
+<!-- APP (last) -->
 <script src="js/app.js"></script>
-<script src="js/tools/crypto-tools.js"></script>
-<script src="js/tools/web-tools.js"></script>
 
 </body>
 </html>
