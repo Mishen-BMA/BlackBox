@@ -353,6 +353,20 @@ function clearMorseDec(){
 // PASSWORD GENERATOR
 // =========================
 
+function getRandomBytes(length){
+    const bytes = new Uint8Array(length);
+    const cryptoApi = globalThis.crypto || window.crypto;
+    if(cryptoApi?.getRandomValues){
+        cryptoApi.getRandomValues(bytes);
+        return bytes;
+    }
+
+    for(let i = 0; i < length; i++){
+        bytes[i] = Math.floor(Math.random() * 256);
+    }
+    return bytes;
+}
+
 function buildPasswordGen(panel){
     panel.innerHTML = `
     ${toolHeader('', 'Password Generator', 'Generate strong passwords with custom options')}
@@ -410,8 +424,7 @@ function runPasswordGen(){
     const passwords = [];
     for(let i = 0; i < count; i++){
         let pass = '';
-        const arr = new Uint32Array(len);
-        crypto.getRandomValues(arr);
+        const arr = getRandomBytes(len);
         for(const n of arr) pass += charset[n % charset.length];
         passwords.push(pass);
     }
@@ -583,8 +596,10 @@ function buildUuidTool(panel){
 }
 
 function generateUuidV4(){
+    const bytes = getRandomBytes(16);
+    let index = 0;
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-        const r = crypto.getRandomValues(new Uint8Array(1))[0] % 16;
+        const r = bytes[index++] % 16;
         const v = c === 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });

@@ -650,6 +650,7 @@ function buildDecoder(panel){
         <label>Encoded Input</label>
         <textarea id="decInput" placeholder="Paste encoded string here..."></textarea>
         <div class="button-group">
+            <button class="btn btn-run" onclick="runDecode('auto')">Auto Detect</button>
             <button class="btn btn-run" onclick="runDecode('base64')">Base64</button>
             <button class="btn btn-run" onclick="runDecode('base32')">Base32</button>
             <button class="btn btn-run" onclick="runDecode('hex')">Hex</button>
@@ -671,9 +672,42 @@ function runDecode(type){
     let result = '';
 
     try{
+        if(type === 'auto'){
+            const guesses = getDecodeGuesses(text);
+            if(!guesses.length){
+                setOutput('decOutput', 'No confident decoder match found. Try selecting a format manually.');
+                showToast('No decoder match found', 'warning');
+                return;
+            }
+
+            const best = guesses[0];
+            const html = `
+                <div style="margin-bottom:12px;">
+                    <span style="color:var(--muted);">Best match: </span>
+                    <strong style="color:var(--primary);">${escapeHtml(best.name)}</strong>
+                    <span style="color:var(--muted); margin-left:10px;">${escapeHtml(best.reason)}</span>
+                </div>
+                <div style="font-family:var(--font-mono); word-break:break-word; margin-bottom:16px;">
+                    ${escapeHtml(best.result)}
+                </div>
+                ${guesses.length > 1 ? `
+                    <div style="color:var(--muted); font-size:12px; margin-bottom:8px;">Other possible decodes:</div>
+                    ${guesses.slice(1, 6).map(guess => `
+                        <div style="padding:8px; margin-bottom:6px; background:var(--panel-light); border-radius:var(--radius-sm);">
+                            <div style="color:var(--primary); font-size:12px; margin-bottom:4px;">
+                                ${escapeHtml(guess.name)} <span style="color:var(--muted);">- ${escapeHtml(guess.reason)}</span>
+                            </div>
+                            <div style="font-family:var(--font-mono); word-break:break-word;">${escapeHtml(guess.result)}</div>
+                        </div>
+                    `).join('')}
+                ` : ''}`;
+            setOutput('decOutput', html, true);
+            return;
+        }
+
         switch(type){
             case 'base64':
-                result = decodeURIComponent(escape(atob(text)));
+                result = decodeBase64Text(text);
                 break;
 
             case 'base32':
@@ -681,16 +715,11 @@ function runDecode(type){
                 break;
 
             case 'hex':
-                result = text.replace(/\s/g,'')
-                    .match(/.{1,2}/g)
-                    .map(b => String.fromCharCode(parseInt(b,16)))
-                    .join('');
+                result = bytesToText(parseHexBytes(text));
                 break;
 
             case 'binary':
-                result = text.trim().split(/\s+/)
-                    .map(b => String.fromCharCode(parseInt(b,2)))
-                    .join('');
+                result = bytesToText(parseBinaryBytes(text));
                 break;
 
             case 'url':
@@ -704,9 +733,7 @@ function runDecode(type){
                 break;
 
             case 'octal':
-                result = text.trim().split(/\s+/)
-                    .map(o => String.fromCharCode(parseInt(o,8)))
-                    .join('');
+                result = bytesToText(parseOctalBytes(text));
                 break;
 
             case 'morse':
@@ -724,6 +751,124 @@ function clearDecoder(){
     document.getElementById('decInput').value = '';
     const out = document.getElementById('decOutput');
     if(out) out.innerHTML = '<span style="color:var(--muted)">Result will appear here...</span>';
+}
+
+function decodeBase64Text(input){
+    const compact = input.replace(/\s+/g, '');
+    const padded = compact.padEnd(Math.ceil(compact.length / 4) * 4, '=');
+    const binary = atob(padded);
+    try{
+        return decodeURIComponent(escape(binary));
+    } catch(e){
+        return binary;
+    }
+}
+
+function bytesToText(bytes){
+    return bytes.map(byte => String.fromCharCode(byte)).join('');
+}
+
+function normalizeHexInput(input){
+    return String(input || '')
+        .replace(/\\x/gi, '')
+        .replace(/0x/gi, '')
+        .replace(/[^0-9a-f]/gi, '');
+}
+
+function parseHexBytes(input){
+    const hex = normalizeHexInput(input);
+    if(!hex || hex.length % 2 !== 0 || /[^0-9a-f]/i.test(hex)){
+        throw new Error('Hex input must contain complete byte pairs');
+    }
+    return hex.match(/.{2}/g).map(byte => parseInt(byte, 16));
+}
+
+function parseBinaryBytes(input){
+    const compact = String(input || '').replace(/\s+/g, '');
+    const groups = /\s/.test(input)
+        ? String(input).trim().split(/\s+/)
+        : compact.match(/.{8}/g);
+    if(!groups || compact.length % 8 !== 0 || groups.some(group => !/^[01]{8}$/.test(group))){
+        throw new Error('Binary input must use 8-bit bytes');
+    }
+    return groups.map(group => parseInt(group, 2));
+}
+
+function parseOctalBytes(input){
+    const raw = String(input || '').trim();
+    const compact = raw.replace(/\s+/g, '');
+    const groups = /\s/.test(raw) ? raw.split(/\s+/) : compact.match(/.{3}/g);
+    if(!groups || compact.length % 3 !== 0 || groups.some(group => !/^[0-7]{3}$/.test(group))){
+        throw new Error('Octal input must use 3-digit bytes');
+    }
+    return groups.map(group => parseInt(group, 8));
+}
+
+function printableRatio(value){
+    if(!value) return 0;
+    const printable = Array.from(value).filter(char => {
+        const code = char.charCodeAt(0);
+        return code === 9 || code === 10 || code === 13 || (code >= 32 && code <= 126);
+    }).length;
+    return printable / value.length;
+}
+
+function englishTextScore(value){
+    const text = String(value || '');
+    if(!text) return 0;
+    const printable = printableRatio(text);
+    const letters = (text.match(/[A-Za-z]/g) || []).length / text.length;
+    const spaces = (text.match(/\s/g) || []).length / text.length;
+    const common = (text.match(/\b(the|and|you|that|have|for|flag|hello|secret|attack)\b/gi) || []).length;
+    const bad = (text.match(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g) || []).length / text.length;
+    return printable * 60 + letters * 20 + Math.min(spaces, 0.25) * 30 + common * 10 - bad * 80;
+}
+
+function addDecodeGuess(guesses, name, reason, score, decoder){
+    try{
+        const result = decoder();
+        if(!result || printableRatio(result) < 0.65) return;
+        guesses.push({ name, reason, score: score + englishTextScore(result), result });
+    } catch(e){}
+}
+
+function getDecodeGuesses(input){
+    const text = String(input || '').trim();
+    const guesses = [];
+    const compact = text.replace(/\s+/g, '');
+
+    if(/^[A-Za-z0-9+/]+={0,2}$/.test(compact) && compact.length >= 4 && compact.length % 4 !== 1){
+        addDecodeGuess(guesses, 'Base64', 'valid Base64 alphabet', 35, () => decodeBase64Text(text));
+    }
+    if(/^[A-Z2-7]+=*$/i.test(compact) && compact.length >= 8){
+        addDecodeGuess(guesses, 'Base32', 'valid Base32 alphabet', 25, () => decodeBase32(text));
+    }
+    if(/^(?:0x)?(?:[0-9a-f]{2}[\s:-]*)+$/i.test(text) || /^(?:\\x[0-9a-f]{2})+$/i.test(text)){
+        addDecodeGuess(guesses, 'Hex', 'complete hex byte pairs', 45, () => bytesToText(parseHexBytes(text)));
+    }
+    if(/^[01\s]+$/.test(text) && compact.length >= 8 && compact.length % 8 === 0){
+        addDecodeGuess(guesses, 'Binary', '8-bit binary bytes', 50, () => bytesToText(parseBinaryBytes(text)));
+    }
+    if(/%[0-9a-f]{2}/i.test(text)){
+        addDecodeGuess(guesses, 'URL', 'contains %XX escapes', 55, () => decodeURIComponent(text));
+    }
+    if(/&(?:[a-z]+|#\d+|#x[0-9a-f]+);/i.test(text)){
+        addDecodeGuess(guesses, 'HTML', 'contains HTML entities', 55, () => {
+            const d = document.createElement('div');
+            d.innerHTML = text;
+            return d.textContent;
+        });
+    }
+    if(/^[0-7\s]+$/.test(text) && compact.length >= 3 && compact.length % 3 === 0){
+        addDecodeGuess(guesses, 'Octal', '3-digit octal bytes', 25, () => bytesToText(parseOctalBytes(text)));
+    }
+    if(/^[.\-/\s]+$/.test(text) && /[.-]/.test(text)){
+        addDecodeGuess(guesses, 'Morse', 'dot/dash Morse symbols', 40, () => morseToText(text));
+    }
+
+    return guesses
+        .filter((guess, index, all) => all.findIndex(item => item.name === guess.name && item.result === guess.result) === index)
+        .sort((a, b) => b.score - a.score);
 }
 
 // Base32 decode
@@ -915,15 +1060,17 @@ function buildVigenereCipher(panel){
 
         <div class="tab-content" id="vigCrack">
             <div class="info-box">
-                Uses Index of Coincidence and frequency analysis to guess the key length,
-                then performs frequency analysis on each column to recover the key.
-                Works best on longer ciphertexts (100+ chars).
+                Enter a known key to decode immediately, or leave it blank to let frequency analysis guess the key.
+                Auto cracking works best on longer ciphertexts (100+ chars).
             </div>
             <label>Ciphertext</label>
             <textarea id="vigCrackInput" placeholder="Paste Vigenere ciphertext..."></textarea>
+            <label>Known Key (optional)</label>
+            <input type="text" id="vigCrackKey" placeholder="Enter key if you already know it...">
             <label>Max Key Length to Try</label>
             <input type="number" id="vigMaxKey" value="12" min="2" max="20">
             <div class="button-group">
+                <button class="btn btn-run" onclick="runVigenereCrack(true)">Decode With Key</button>
                 <button class="btn btn-run" onclick="runVigenereCrack()">Auto Crack</button>
             </div>
             ${createOutput('vigCrackOutput', 'Crack Results')}
@@ -938,7 +1085,10 @@ function runVigenere(mode){
     const key  = document.getElementById('vigKey').value.toUpperCase().replace(/[^A-Z]/g,'');
     if(!text){ showToast('Enter text first', 'error'); return; }
     if(!key){  showToast('Enter a key', 'error'); return; }
+    setOutput('vigOutput', vigenereTransform(text, key, mode));
+}
 
+function vigenereTransform(text, key, mode){
     let result = '';
     let ki = 0;
     for(const c of text){
@@ -958,7 +1108,7 @@ function runVigenere(mode){
             result += c;
         }
     }
-    setOutput('vigOutput', result);
+    return result;
 }
 
 function clearVigenere(){
@@ -968,9 +1118,27 @@ function clearVigenere(){
     if(out) out.innerHTML = '<span style="color:var(--muted)">Result will appear here...</span>';
 }
 
-function runVigenereCrack(){
-    const cipher  = document.getElementById('vigCrackInput').value.toUpperCase().replace(/[^A-Z]/g,'');
+function runVigenereCrack(useKnownKeyOnly = false){
+    const rawCipher = document.getElementById('vigCrackInput').value;
+    const cipher  = rawCipher.toUpperCase().replace(/[^A-Z]/g,'');
+    const knownKey = document.getElementById('vigCrackKey')?.value.toUpperCase().replace(/[^A-Z]/g,'') || '';
     const maxKey  = parseInt(document.getElementById('vigMaxKey').value) || 12;
+    if(!cipher){ showToast('Enter ciphertext', 'error'); return; }
+
+    if(knownKey){
+        const plain = vigenereTransform(rawCipher, knownKey, 'dec');
+        setOutput('vigCrackOutput', `
+            <div style="margin-bottom:12px;">
+                <span style="color:var(--muted);">Used Key: </span>
+                <strong style="color:var(--success);">${escapeHtml(knownKey)}</strong>
+            </div>
+            <div style="color:var(--muted); font-size:12px; margin-bottom:8px;">Decrypted Text:</div>
+            <div style="font-family:var(--font-mono); word-break:break-word;">${escapeHtml(plain)}</div>
+        `, true);
+        return;
+    }
+
+    if(useKnownKeyOnly){ showToast('Enter a key first', 'error'); return; }
     if(cipher.length < 20){ showToast('Need more ciphertext (20+ chars)', 'error'); return; }
 
     // Step 1: Find best key length using IoC
@@ -1034,7 +1202,7 @@ function runVigenereCrack(){
             <strong style="color:var(--success);">${key}</strong>
         </div>
         <div style="color:var(--muted); font-size:12px; margin-bottom:8px;">Decrypted Text:</div>
-        <div style="font-family:var(--font-mono); word-break:break-word;">${plain}</div>
+        <div style="font-family:var(--font-mono); word-break:break-word;">${escapeHtml(plain)}</div>
     `, true);
 }
 
@@ -1056,8 +1224,8 @@ function buildXorTool(panel){
         </div>
 
         <div class="tab-content active" id="xorSingle">
-            <label>Input (text or hex with 0x prefix)</label>
-            <textarea id="xorSingleInput" placeholder="Enter text or hex (e.g. 0x48656c6c6f)..."></textarea>
+            <label>Input (text or hex)</label>
+            <textarea id="xorSingleInput" placeholder="Enter text or hex (e.g. 48656c6c6f, 0x48656c6c6f or \\x48\\x65)..."></textarea>
             <label>XOR Key (single byte, decimal 0-255 or hex 0x00-0xFF)</label>
             <input type="text" id="xorSingleKey" placeholder="e.g. 0x41 or 65">
             <div class="button-group">
@@ -1068,15 +1236,15 @@ function buildXorTool(panel){
         </div>
 
         <div class="tab-content" id="xorMulti">
-            <label>Input Text</label>
-            <textarea id="xorMultiInput" placeholder="Enter plaintext..."></textarea>
+            <label>Input (text or hex)</label>
+            <textarea id="xorMultiInput" placeholder="Enter text or hex..."></textarea>
             <label>XOR Key (text or hex)</label>
             <input type="text" id="xorMultiKey" placeholder="e.g. secret or 0xDEADBEEF">
             <div class="button-group">
                 <button class="btn btn-run" onclick="runXorMulti()">XOR</button>
                 <button class="btn btn-outline" onclick="clearXorMulti()">Clear</button>
             </div>
-            ${createOutput('xorMultiOutput', 'XOR Result (hex)')}
+            ${createOutput('xorMultiOutput', 'XOR Result')}
         </div>
 
         <div class="tab-content" id="xorBrute">
@@ -1112,16 +1280,16 @@ function runXorSingle(){
     }
 
     let bytes;
-    if(rawInput.startsWith('0x') || rawInput.startsWith('0X')){
-        const hex = rawInput.slice(2).replace(/\s/g,'');
-        bytes = hex.match(/.{1,2}/g).map(b => parseInt(b,16));
-    } else {
-        bytes = Array.from(rawInput).map(c => c.charCodeAt(0));
+    try{
+        bytes = parseXorInputBytes(rawInput);
+    } catch(e){
+        showToast(e.message, 'error');
+        return;
     }
 
     const xored   = bytes.map(b => b ^ keyByte);
-    const asText  = xored.map(b => b >= 32 && b < 127 ? String.fromCharCode(b) : '.').join('');
-    const asHex   = xored.map(b => b.toString(16).padStart(2,'0')).join(' ');
+    const asText  = bytesToDisplayText(xored);
+    const asHex   = bytesToHex(xored);
 
     setOutput('xorSingleOutput', `Text: ${asText}\nHex:  ${asHex}`);
 }
@@ -1135,23 +1303,22 @@ function clearXorSingle(){
 
 function runXorMulti(){
     const text = document.getElementById('xorMultiInput').value;
-    const key  = document.getElementById('xorMultiKey').value;
-    if(!text){ showToast('Enter text', 'error'); return; }
+    const key  = document.getElementById('xorMultiKey').value.trim();
+    if(!text){ showToast('Enter input', 'error'); return; }
     if(!key){  showToast('Enter key',  'error'); return; }
 
-    let keyBytes;
-    if(key.startsWith('0x') || key.startsWith('0X')){
-        const hex = key.slice(2).replace(/\s/g,'');
-        keyBytes  = hex.match(/.{1,2}/g).map(b => parseInt(b,16));
-    } else {
-        keyBytes = Array.from(key).map(c => c.charCodeAt(0));
+    let inputBytes, keyBytes;
+    try{
+        inputBytes = parseXorInputBytes(text);
+        keyBytes = parseXorInputBytes(key);
+    } catch(e){
+        showToast(e.message, 'error');
+        return;
     }
 
-    const result = Array.from(text).map((c,i) =>
-        (c.charCodeAt(0) ^ keyBytes[i % keyBytes.length]).toString(16).padStart(2,'0')
-    ).join(' ');
+    const resultBytes = inputBytes.map((byte, i) => byte ^ keyBytes[i % keyBytes.length]);
 
-    setOutput('xorMultiOutput', result);
+    setOutput('xorMultiOutput', `Text: ${bytesToDisplayText(resultBytes)}\nHex:  ${bytesToHex(resultBytes)}`);
 }
 
 function clearXorMulti(){
@@ -1162,18 +1329,25 @@ function clearXorMulti(){
 }
 
 function runXorBrute(){
-    const hexInput = document.getElementById('xorBruteInput').value.replace(/\s/g,'');
+    const hexInput = document.getElementById('xorBruteInput').value;
     if(!hexInput){ showToast('Enter hex input', 'error'); return; }
 
-    const bytes = hexInput.match(/.{1,2}/g).map(b => parseInt(b,16));
+    let bytes;
+    try{
+        bytes = parseHexBytes(hexInput);
+    } catch(e){
+        showToast(e.message, 'error');
+        return;
+    }
 
     const results = [];
-    for(let key = 1; key <= 255; key++){
+    for(let key = 0; key <= 255; key++){
         const decoded = bytes.map(b => b ^ key);
         const text    = decoded.map(b => String.fromCharCode(b)).join('');
         const printable = decoded.filter(b => b >= 32 && b < 127).length;
         const ratio   = printable / decoded.length;
-        if(ratio > 0.85) results.push({ key, text, ratio });
+        const score = englishTextScore(text);
+        if(ratio > 0.85) results.push({ key, text, ratio, score });
     }
 
     if(!results.length){
@@ -1181,16 +1355,16 @@ function runXorBrute(){
         return;
     }
 
-    results.sort((a,b) => b.ratio - a.ratio);
+    results.sort((a,b) => b.score - a.score || b.ratio - a.ratio);
 
-    const html = results.map(r => `
+    const html = results.slice(0, 40).map(r => `
         <div style="padding:8px; margin-bottom:6px; background:var(--panel-light);
                     border-radius:var(--radius-sm); display:flex; gap:12px; align-items:flex-start;">
             <span style="color:var(--primary); min-width:80px; font-size:12px; flex-shrink:0;">
                 Key: 0x${r.key.toString(16).padStart(2,'0')} (${r.key})
             </span>
             <span style="font-family:var(--font-mono); word-break:break-word; font-size:13px;">
-                ${r.text}
+                ${escapeHtml(r.text)}
             </span>
             <button class="output-action-btn" style="flex-shrink:0;"
                 onclick="copyText('${r.text.replace(/'/g,"\\'")}', this)">Copy</button>
@@ -1198,6 +1372,29 @@ function runXorBrute(){
     `).join('');
 
     setOutput('xorBruteOutput', html, true);
+}
+
+function looksLikeHexBytes(input){
+    const raw = String(input || '').trim();
+    if(/^0x[0-9a-f\s:-]+$/i.test(raw) || /^(?:\\x[0-9a-f]{2})+$/i.test(raw)) return true;
+    if(/^[0-9a-f]{2}(?:[\s:-]+[0-9a-f]{2})+$/i.test(raw)) return true;
+    const compact = raw.replace(/\s+/g, '');
+    return compact.length >= 4 && compact.length % 2 === 0 && /^[0-9a-f]+$/i.test(compact) && /\d/.test(compact);
+}
+
+function parseXorInputBytes(input){
+    const raw = String(input || '');
+    if(!raw) throw new Error('Enter input');
+    if(looksLikeHexBytes(raw)) return parseHexBytes(raw);
+    return Array.from(raw).map(char => char.charCodeAt(0) & 0xff);
+}
+
+function bytesToDisplayText(bytes){
+    return bytes.map(byte => byte >= 32 && byte < 127 ? String.fromCharCode(byte) : '.').join('');
+}
+
+function bytesToHex(bytes){
+    return bytes.map(byte => byte.toString(16).padStart(2,'0')).join(' ');
 }
 
 // =========================
@@ -1330,33 +1527,40 @@ function buildFrequencyAnalyzer(panel){
 }
 
 function runFrequencyAnalyzer(){
-    const text = document.getElementById('freqInput').value.toUpperCase().replace(/[^A-Z]/g,'');
+    const rawText = document.getElementById('freqInput').value;
+    const text = rawText.toUpperCase().replace(/[^A-Z]/g,'');
     if(!text){ showToast('Enter ciphertext', 'error'); return; }
 
-    const freq = {};
-    for(const c of text) freq[c] = (freq[c] || 0) + 1;
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    const freq = Object.fromEntries(alphabet.map(char => [char, 0]));
+    for(const c of text) freq[c]++;
 
-    const sorted = Object.entries(freq).sort((a,b) => b[1]-a[1]);
+    const sorted = Object.entries(freq).sort((a,b) => b[1]-a[1] || a[0].localeCompare(b[0]));
     const total  = text.length;
-    const english = ['E','T','A','O','I','N','S','H','R','D','L','C','U','M','W','F','G','Y','P','B'];
+    const english = 'ETAOINSHRDLCUMWFGYPBVKJXQZ'.split('');
+    const nonLetters = rawText.length - text.length;
+    const ioc = total > 1
+        ? Object.values(freq).reduce((sum, count) => sum + count * (count - 1), 0) / (total * (total - 1))
+        : 0;
 
     const html = `
     <div style="margin-bottom:16px; color:var(--muted); font-size:13px;">
         Total letters: <strong style="color:var(--text);">${total}</strong>
-        &nbsp;|&nbsp; Unique: <strong style="color:var(--text);">${sorted.length}</strong>
+        &nbsp;|&nbsp; Ignored non-letters: <strong style="color:var(--text);">${nonLetters}</strong>
+        &nbsp;|&nbsp; Index of Coincidence: <strong style="color:var(--text);">${ioc.toFixed(4)}</strong>
     </div>
     <div style="margin-bottom:16px;">
         <div style="color:var(--muted); font-size:12px; margin-bottom:8px;">
             English frequency order: E T A O I N S H R D L C U M W F G Y P B
         </div>
         <div style="color:var(--primary); font-size:12px; margin-bottom:8px;">
-            Your frequency order: ${sorted.map(s=>s[0]).join(' ')}
+            Your frequency order: ${sorted.filter(s => s[1] > 0).map(s=>s[0]).join(' ') || 'N/A'}
         </div>
     </div>
     ${sorted.map(([char, count], idx) => {
         const pct      = ((count / total) * 100).toFixed(1);
         const engChar  = english[idx] || '?';
-        const barWidth = Math.round((count / sorted[0][1]) * 100);
+        const barWidth = sorted[0][1] ? Math.round((count / sorted[0][1]) * 100) : 0;
         return `
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
             <span style="color:var(--primary); font-weight:700; min-width:20px;

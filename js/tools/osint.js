@@ -123,7 +123,8 @@ function searchDork(){
 
 function loadDorkTemplate(dork){
     document.getElementById('dorkExtra').value = dork;
-    document.querySelector('[onclick*="dorkBuilder"]').click();
+    const builderTab = document.querySelector('[onclick*="dorkBuilder"]');
+    if(builderTab) builderTab.click();
     setOutput('dorkOutput', dork);
     lastDork = dork;
     document.getElementById('dorkSearchBtn').style.display = 'block';

@@ -227,12 +227,21 @@ function runMagicBytes(){
 }
 
 function runMagicHex(){
-    const raw   = document.getElementById('magicHexInput').value.replace(/\s/g,'');
-    const bytes = raw.match(/.{1,2}/g).map(b=>parseInt(b,16));
+    const raw = document.getElementById('magicHexInput').value.replace(/\s/g,'');
+    if(!raw){
+        showToast('Paste hex bytes first', 'error');
+        return;
+    }
+    if(!/^[a-f0-9]+$/i.test(raw) || raw.length % 2 !== 0){
+        setOutput('magicHexOutput', 'Invalid hex input. Use complete byte pairs such as 89 50 4e 47.');
+        return;
+    }
+
+    const bytes = raw.match(/.{2}/g).map(b=>parseInt(b,16));
     const match = identifyMagic(bytes);
     setOutput('magicHexOutput', match
         ? `Detected: ${match.type}\nExtension: ${match.ext}`
-        : ' Unknown file type'
+        : 'Unknown file type'
     );
 }
 
