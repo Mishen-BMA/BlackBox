@@ -4,23 +4,25 @@ BlackBox is a browser-based CTF toolkit for common web, crypto, reversing, binar
 
 ## Screenshots
 
-Add screenshots later in `assets/screenshots/` using the filenames below, or update the paths if you prefer different names.
-
 ### Dashboard
 
-![Dashboard screenshot](assets/screenshots/dashboard.png)
+![BlackBox dashboard](assets/screenshots/Dashboard.png)
 
-### Tool Category
+### Category View
 
-![Category screenshot](assets/screenshots/category.png)
+![BlackBox category view](assets/screenshots/Category.png)
 
 ### Tool Panel
 
-![Tool panel screenshot](assets/screenshots/tool-panel.png)
+![BlackBox tool panel](assets/screenshots/Tool%20Panel.png)
 
-### Theme Examples
+### Themes
 
-![Themes screenshot](assets/screenshots/themes.png)
+![Cyber theme](assets/screenshots/Theme1.png)
+![Hacker theme](assets/screenshots/Theme2.png)
+![Midnight theme](assets/screenshots/Theme3.png)
+![Pink theme](assets/screenshots/Theme4.png)
+![Yellow theme](assets/screenshots/Theme5.png)
 
 ## Features
 
@@ -76,7 +78,7 @@ BlackBox/
   assets/
     libs/                 Browser-side third-party libraries
     wordlists/            Built-in wordlists for cracking and CTF workflows
-    screenshots/          Add README screenshots here
+    screenshots/          README screenshots
 ```
 
 ## Tool Categories
@@ -193,16 +195,3 @@ The Hash Cracker can also accept custom words from the text area or an uploaded 
 - Tool IDs must be registered in `TOOL_BUILDERS` and `TOOL_NAMES` inside `js/app.js`.
 - Shared helper functions should go in `js/global.js`.
 - Keep user-facing text readable across every theme by using the CSS variables instead of hard-coded colors.
-
-## Screenshot Checklist
-
-When you are ready to add screenshots, place them here:
-
-```text
-assets/screenshots/dashboard.png
-assets/screenshots/category.png
-assets/screenshots/tool-panel.png
-assets/screenshots/themes.png
-```
-
-After adding the files, the image placeholders in this README will render automatically.
