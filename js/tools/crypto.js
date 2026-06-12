@@ -1760,14 +1760,18 @@ function runAes(mode){
             CFB: CryptoJS.mode.CFB,
             OFB: CryptoJS.mode.OFB,
         };
+        const hashedKey = CryptoJS.SHA256(key);
         const cfg = { mode: modeMap[aesMode], padding: CryptoJS.pad.Pkcs7 };
+        if(aesMode !== 'ECB') cfg.iv = CryptoJS.MD5(key);
 
         if(mode === 'enc'){
-            const encrypted = CryptoJS.AES.encrypt(text, key, cfg);
+            const encrypted = CryptoJS.AES.encrypt(text, hashedKey, cfg);
             setOutput('aesOutput', encrypted.toString());
         } else {
-            const decrypted = CryptoJS.AES.decrypt(text, key, cfg);
-            setOutput('aesOutput', decrypted.toString(CryptoJS.enc.Utf8));
+            const decrypted = CryptoJS.AES.decrypt(text, hashedKey, cfg);
+            const plaintext = decrypted.toString(CryptoJS.enc.Utf8);
+            if(!plaintext) throw new Error('Invalid key, mode or ciphertext');
+            setOutput('aesOutput', plaintext);
         }
     } catch(e){
         setOutput('aesOutput', `Error: ${e.message}`);

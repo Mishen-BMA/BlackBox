@@ -1,6 +1,6 @@
 # BlackBox
 
-BlackBox is a browser-based CTF toolkit for common web, crypto, reversing, binary, forensics, OSINT, and utility tasks. It is built with plain HTML, CSS, and JavaScript, so it can run locally without a backend.
+BlackBox is a browser-based CTF toolkit for common CTF workflows: power tools, web, crypto, binary exploitation, reversing, forensics, OSINT, and utility tasks. It is built with plain HTML, CSS, and JavaScript, so it can run locally, work from GitHub Pages, and run without a backend.
 
 ## Screenshots
 
@@ -26,12 +26,14 @@ BlackBox is a browser-based CTF toolkit for common web, crypto, reversing, binar
 
 ## Features
 
-- 55 tools across 7 CTF-focused categories.
+- 66 tools across 8 CTF-focused categories.
 - Global search for quickly opening tools.
 - Sidebar category navigation.
+- Power tools for flag detection, auto decoding, notes, and chained transforms.
 - Multi-theme UI: Cyber, Hacker, Midnight, Pink, and Yellow.
 - Back navigation between dashboard, category previews, and tool panels.
 - Local wordlists for hash cracking.
+- Local browser libraries for QR, EXIF, hashing, and other client-side features.
 - Client-side processing only; no backend service is required.
 
 ## Running Locally
@@ -50,6 +52,19 @@ http://127.0.0.1:8000/
 
 Running through the local server is recommended because browser security rules can block local `fetch()` requests when opening `index.html` directly. Some tools, such as the Hash Cracker built-in wordlists, work best from the local server.
 
+## Deploying With GitHub Pages
+
+BlackBox is a static site, so GitHub Pages can serve it directly from the repository.
+
+1. Commit the full project, including `index.html`, `css/`, `js/`, `assets/libs/`, `assets/wordlists/`, and `assets/screenshots/`.
+2. Push to GitHub.
+3. In the repository, open **Settings > Pages**.
+4. Set **Source** to **Deploy from a branch**.
+5. Choose the branch you deploy from, usually `main`, and select `/ (root)`.
+6. Save and wait for GitHub Pages to publish the site.
+
+Do not omit `assets/libs/`; the app references those local files for offline/browser-side functionality.
+
 ## Project Structure
 
 ```text
@@ -66,10 +81,12 @@ BlackBox/
     app.js                Navigation, search, theme switching, tool registry
     global.js             Shared helpers, output helpers, copy/export utilities
     tools/
+      powertools.js       Flag detector, auto decoder, notes, and tool chainer
       web.js              Web exploitation tools
       crypto.js           Hashing, cracking, crypto helpers
       encoding.js         Encoding utilities
       ciphers.js          Cipher utilities
+      ciphers2.js         Additional classical ciphers and number theory tools
       binary.js           Binary exploitation tools
       reversing.js        Reverse engineering tools
       forensics.js        Forensics tools
@@ -83,6 +100,13 @@ BlackBox/
 
 ## Tool Categories
 
+### Power Tools
+
+- Flag Auto-Detector
+- Auto Decoder
+- CTF Notepad
+- Tool Chainer
+
 ### Web Exploitation
 
 - JWT Decoder
@@ -93,6 +117,8 @@ BlackBox/
 - HTML Encoder/Decoder
 - Payload Library
 - cURL Builder
+- CORS Bypass Generator
+- SQLi WAF Tamper
 
 ### Cryptography
 
@@ -111,6 +137,11 @@ BlackBox/
 - Base Converter
 - HMAC Generator
 - ASCII Converter
+- Playfair Cipher
+- Affine Cipher
+- Bacon Cipher
+- Polybius Square
+- Number Theory
 
 ### Binary Exploitation
 
@@ -188,6 +219,16 @@ Built-in wordlists are stored in `assets/wordlists/`:
 
 The Hash Cracker can also accept custom words from the text area or an uploaded `.txt` wordlist.
 
+## Local Libraries
+
+Browser-side libraries are stored in `assets/libs/` so the deployed GitHub Pages site does not depend on remote CDNs at runtime:
+
+- `crypto-js.min.js`
+- `jsqr.min.js`
+- `qrcode.min.js`
+- `exifr.min.js`
+- `diff.min.js`
+
 ## Development Notes
 
 - Tool cards and tool panels are declared in `index.html`.
@@ -195,3 +236,4 @@ The Hash Cracker can also accept custom words from the text area or an uploaded 
 - Tool IDs must be registered in `TOOL_BUILDERS` and `TOOL_NAMES` inside `js/app.js`.
 - Shared helper functions should go in `js/global.js`.
 - Keep user-facing text readable across every theme by using the CSS variables instead of hard-coded colors.
+- Before deploying, run `node --check js/app.js` and `node --check` on the files in `js/tools/`.

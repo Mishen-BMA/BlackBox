@@ -159,6 +159,11 @@ function buildShellcodeEncoder(panel){
 function parseShellcode(raw){
     raw = raw.trim();
     raw = raw.replace(/\\x/g,' ').replace(/0x/gi,' ').replace(/[,;"]/g,' ');
+    raw = raw.replace(/\s+/g, ' ').trim();
+    if(/^[0-9a-fA-F]+$/.test(raw) && raw.length > 2){
+        if(raw.length % 2 !== 0) raw = '0' + raw;
+        raw = raw.match(/.{2}/g).join(' ');
+    }
     const bytes = raw.split(/\s+/).filter(b => /^[0-9a-fA-F]{1,2}$/.test(b));
     return bytes.map(b => parseInt(b,16));
 }
