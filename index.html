@@ -83,7 +83,7 @@
 
             <button class="nav-btn" onclick="showView('powertools')">
                 <span class="nav-icon"><svg class="icon"><use xlink:href="#icon-zap"></use></svg></span> Power Tools
-                <span class="nav-badge">4</span>
+                <span class="nav-badge">5</span>
             </button>
 
             <button class="nav-btn" onclick="showView('web')">
@@ -173,8 +173,8 @@
                 <div class="card" onclick="showView('powertools')">
                     <div class="card-icon"><svg class="icon"><use xlink:href="#icon-zap"></use></svg></div>
                     <div class="card-title">Power Tools</div>
-                    <p class="card-desc">Flag detector, auto decoder, CTF notepad and tool chainer</p>
-                    <span class="card-badge available">4 Tools</span>
+                    <p class="card-desc">Challenge advisor, flag detector, auto decoder, notes and chaining</p>
+                    <span class="card-badge available">5 Tools</span>
                 </div>
 
                 <div class="card" onclick="showView('web')">
@@ -236,6 +236,11 @@
                 <p>Advanced CTF workflow helpers for fast competitions</p>
             </div>
             <div class="card-grid">
+                <div class="card" onclick="showTool('challengeAdvisor')">
+                    <div class="card-icon"><svg class="icon"><use xlink:href="#icon-book"></use></svg></div>
+                    <div class="card-title">Challenge Flow Advisor</div>
+                    <p class="card-desc">Paste a challenge description and get a tool workflow</p>
+                </div>
                 <div class="card" onclick="showTool('flagDetector')">
                     <div class="card-icon"><svg class="icon"><use xlink:href="#icon-flag"></use></svg></div>
                     <div class="card-title">Flag Auto-Detector</div>
@@ -257,6 +262,7 @@
                     <p class="card-desc">Run multiple decode steps in sequence</p>
                 </div>
             </div>
+            <div id="challengeAdvisor" class="tool-panel" style="display:none"></div>
             <div id="flagDetector" class="tool-panel" style="display:none"></div>
             <div id="autoDecoder" class="tool-panel" style="display:none"></div>
             <div id="ctfNotepad" class="tool-panel" style="display:none"></div>

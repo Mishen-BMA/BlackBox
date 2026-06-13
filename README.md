@@ -26,10 +26,10 @@ BlackBox is a browser-based CTF toolkit for common CTF workflows: power tools, w
 
 ## Features
 
-- 66 tools across 8 CTF-focused categories.
+- 67 tools across 8 CTF-focused categories.
 - Global search for quickly opening tools.
 - Sidebar category navigation.
-- Power tools for flag detection, auto decoding, notes, and chained transforms.
+- Power tools for challenge flow advice, flag detection, auto decoding, notes, and chained transforms.
 - Multi-theme UI: Cyber, Hacker, Midnight, Pink, and Yellow.
 - Back navigation between dashboard, category previews, and tool panels.
 - Local wordlists for hash cracking.
@@ -81,7 +81,7 @@ BlackBox/
     app.js                Navigation, search, theme switching, tool registry
     global.js             Shared helpers, output helpers, copy/export utilities
     tools/
-      powertools.js       Flag detector, auto decoder, notes, and tool chainer
+      powertools.js       Challenge advisor, flag detector, auto decoder, notes, and tool chainer
       web.js              Web exploitation tools
       crypto.js           Hashing, cracking, crypto helpers
       encoding.js         Encoding utilities
@@ -102,6 +102,7 @@ BlackBox/
 
 ### Power Tools
 
+- Challenge Flow Advisor
 - Flag Auto-Detector
 - Auto Decoder
 - CTF Notepad

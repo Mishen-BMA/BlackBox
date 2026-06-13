@@ -1,4 +1,386 @@
 // =========================
+// CHALLENGE FLOW ADVISOR
+// =========================
+
+const CHALLENGE_FLOW_RULES = [
+    {
+        category: 'Web / API',
+        keywords: ['web', 'login', 'admin', 'portal', 'api', 'endpoint', 'http', 'cookie', 'session', 'jwt', 'bearer', 'header', 'cors', 'sqli', 'sql', 'xss', 'csrf', 'redirect', 'url', 'parameter', 'graphql', 'rest', 'ssti', 'lfi', 'ssrf'],
+        tools: [
+            ['urlParser', 'URL Parser', 'Break URLs into paths, parameters and fragments.'],
+            ['cookieParser', 'Cookie Parser', 'Inspect session cookies, encoded values and flags.'],
+            ['headerParser', 'Header Parser', 'Review request/response headers and security hints.'],
+            ['jwtDecoder', 'JWT Decoder', 'Decode bearer tokens or JWT-looking cookies.'],
+            ['payloadLibrary', 'Payload Library', 'Pick focused payloads for the suspected bug class.'],
+            ['sqliTamper', 'SQLi WAF Tamper', 'Generate SQLi variants when filters block obvious payloads.'],
+            ['curlBuilder', 'cURL Builder', 'Build repeatable requests once an endpoint looks promising.'],
+        ],
+        steps: [
+            'Save the URL, request method, cookies, headers and visible roles in CTF Notepad.',
+            'Parse URLs and cookies before payload testing; encoded values often hold clues.',
+            'Decode JWTs and inspect role, admin, exp, uid and permissions fields.',
+            'Compare guest and privileged responses with Diff Checker when possible.',
+            'Test one payload family at a time, then scan interesting responses for flags.',
+        ],
+        external: 'Use browser devtools or Burp Suite for interception, replay and response comparison.',
+    },
+    {
+        category: 'Crypto / Encoding',
+        keywords: ['crypto', 'cipher', 'decode', 'encode', 'base64', 'base32', 'hex', 'binary', 'rot', 'caesar', 'vigenere', 'xor', 'hash', 'md5', 'sha', 'rsa', 'aes', 'hmac', 'key', 'iv', 'modulus', 'prime', 'encrypted', 'decrypt', 'frequency', 'atbash', 'polybius', 'bacon', 'affine', 'playfair'],
+        tools: [
+            ['autoDecoder', 'Auto Decoder', 'Try common encodings and simple ciphers first.'],
+            ['hashIdentifier', 'Hash Identifier', 'Classify hash-like or encoded strings.'],
+            ['decoder', 'Decoder', 'Run precise Base64, Base32, hex, binary, URL or HTML decoding.'],
+            ['caesarCipher', 'Caesar / ROT', 'Brute force rotation ciphers quickly.'],
+            ['xorTool', 'XOR Tool', 'Test single-byte or repeating-key XOR clues.'],
+            ['frequencyAnalyzer', 'Frequency Analyzer', 'Check substitution-cipher letter patterns.'],
+            ['rsaTool', 'RSA Tool', 'Inspect small RSA values and known key parameters.'],
+            ['aesTool', 'AES Tool', 'Decrypt when key, IV, mode and ciphertext are supplied.'],
+        ],
+        steps: [
+            'Paste suspicious text into Auto Decoder before choosing a specialist cipher.',
+            'Identify hash-like values by length and format before cracking.',
+            'Try challenge/story words as keys when a keyword cipher is hinted.',
+            'For RSA or AES, write down every parameter exactly before decrypting.',
+            'Run each decoded layer through Flag Auto-Detector before continuing.',
+        ],
+        external: 'Use CyberChef, SageMath, RsaCtfTool or hashcat when the math or cracking gets heavy.',
+    },
+    {
+        category: 'Forensics / Stego',
+        keywords: ['forensics', 'stego', 'steganography', 'image', 'png', 'jpg', 'jpeg', 'exif', 'metadata', 'lsb', 'chunk', 'file', 'hidden', 'deleted', 'recover', 'dump', 'pcap', 'traffic', 'wireshark', 'audio', 'wav', 'video', 'zip', 'archive', 'memory', 'camera', 'snapshot'],
+        tools: [
+            ['metadataExtractor', 'Metadata Extractor', 'Check EXIF, comments, timestamps and GPS hints.'],
+            ['magicBytes', 'Magic Bytes ID', 'Confirm the real file type before trusting extensions.'],
+            ['stringsExtractor', 'Strings Extractor', 'Extract readable clues, passwords, URLs and flags.'],
+            ['hexDump', 'Hex Dump', 'Inspect headers, trailers and embedded data.'],
+            ['pngAnalyzer', 'PNG Chunk Analyzer', 'Find text chunks, custom chunks and data after IEND.'],
+            ['lsbDetector', 'LSB Stego Detector', 'Test image least-significant-bit hiding.'],
+            ['entropyAnalyzer', 'Entropy Analyzer', 'Spot compressed, encrypted or packed regions.'],
+        ],
+        steps: [
+            'Hash the file and note its original name, size and source.',
+            'Check metadata, magic bytes and strings before deeper analysis.',
+            'For PNG files, inspect chunks and look for extra data after IEND.',
+            'For image hiding hints, try LSB extraction and scan the result.',
+            'If another file or encoded blob appears, restart the same flow on it.',
+        ],
+        external: 'Use exiftool, binwalk, zsteg, steghide, foremost, volatility, Wireshark or tshark for deeper cases.',
+    },
+    {
+        category: 'Reverse Engineering',
+        keywords: ['reverse', 'reversing', 'binary', 'disassemble', 'decompile', 'crackme', 'license', 'serial', 'password check', 'vault', 'locking', 'elf', 'exe', 'apk', 'obfuscated', 'javascript', 'assembly', 'strings'],
+        tools: [
+            ['magicBytes', 'Magic Bytes ID', 'Identify the file type from its header.'],
+            ['stringsExtractor', 'Strings Extractor', 'Find visible checks, messages, URLs and keys.'],
+            ['elfParser', 'ELF Header Parser', 'Inspect architecture and ELF metadata.'],
+            ['hexViewer', 'Hex Viewer', 'Look at offsets and raw bytes.'],
+            ['deobfuscator', 'JS Deobfuscator', 'Clean up JavaScript challenge logic.'],
+            ['disasmRef', 'Disasm Reference', 'Read common x86/x64 instructions while reversing.'],
+            ['regexTester', 'Regex Tester', 'Extract flags, hashes and URLs from strings or source.'],
+        ],
+        steps: [
+            'Identify the file type and architecture first.',
+            'Extract strings and search for success, fail, password, key, admin and K4P.',
+            'For JavaScript, deobfuscate and search for endpoints, comparisons and encoded literals.',
+            'For compiled binaries, move to Ghidra or gdb after BlackBox gives the first map.',
+            'Scan extracted strings and decoded constants for flags.',
+        ],
+        external: 'Use Ghidra, Cutter, radare2, gdb, ltrace, strace, jadx or apktool for full reversing.',
+    },
+    {
+        category: 'Pwn / Binary Exploitation',
+        keywords: ['pwn', 'overflow', 'buffer', 'segfault', 'crash', 'rop', 'shellcode', 'ret2win', 'ret2libc', 'heap', 'format string', 'canary', 'nx', 'pie', 'got', 'plt', 'libc', 'exploit'],
+        tools: [
+            ['elfParser', 'ELF Header Parser', 'Inspect binary architecture and entry metadata.'],
+            ['patternGen', 'Pattern Generator', 'Find exact EIP/RIP overwrite offsets.'],
+            ['stringHexConverter', 'String / Hex', 'Convert payload pieces and byte strings.'],
+            ['shellcodeEncoder', 'Shellcode Encoder', 'Format shellcode and watch bad characters.'],
+            ['ropReference', 'ROP Reference', 'Review common ROP techniques and gadget ideas.'],
+            ['asmConverter', 'Assembly Reference', 'Check registers and instruction behavior.'],
+        ],
+        steps: [
+            'Run basic binary checks externally, then record architecture and protections.',
+            'Generate a cyclic pattern and crash the binary to find the overwrite offset.',
+            'Convert addresses and payload fragments carefully before building the exploit.',
+            'Try the simplest path first: ret2win, then ret2libc or ROP if needed.',
+            'Keep every offset, leak and payload version documented.',
+        ],
+        external: 'Use pwntools, gdb/pwndbg, checksec, ROPgadget, ropper and one_gadget for real exploitation.',
+    },
+    {
+        category: 'OSINT',
+        keywords: ['osint', 'username', 'profile', 'social', 'email', 'domain', 'company', 'person', 'dossier', 'informant', 'leak', 'geolocation', 'map', 'photo', 'twitter', 'github', 'linkedin', 'instagram', 'google', 'dork'],
+        tools: [
+            ['dorkBuilder', 'Google Dork Builder', 'Build precise searches for exact clues and domains.'],
+            ['usernameGen', 'Username Generator', 'Generate likely username variants.'],
+            ['emailGuesser', 'Email Format Guesser', 'Build possible emails from names and domains.'],
+            ['ipConverter', 'IP Converter', 'Convert unusual IP formats in clues.'],
+            ['subnetCalc', 'Subnet Calculator', 'Understand CIDR ranges and network clues.'],
+            ['shodanBuilder', 'Shodan Query Builder', 'Build scoped infrastructure queries when allowed.'],
+        ],
+        steps: [
+            'Extract exact names, handles, domains, emails, dates, images and unusual phrases.',
+            'Search exact phrases first, then broaden with dorks.',
+            'Generate username and email variants from discovered names.',
+            'Record source links and evidence, not just guesses.',
+            'Decode odd strings or hidden metadata found during recon.',
+        ],
+        external: 'Use search engines, public profiles, maps and archive sites only within the challenge scope.',
+    },
+    {
+        category: 'Network / PCAP',
+        keywords: ['network', 'pcap', 'packet', 'capture', 'traffic', 'wireshark', 'tcp', 'udp', 'dns', 'stream', 'radio', 'transmission', 'frequency', 'intercept', 'communication'],
+        tools: [
+            ['stringsExtractor', 'Strings Extractor', 'Pull readable traffic artifacts from exports.'],
+            ['hexDump', 'Hex Dump', 'Inspect raw packet payload exports.'],
+            ['autoDecoder', 'Auto Decoder', 'Decode suspicious payload strings.'],
+            ['fileHasher', 'File Hasher', 'Track exported files and reconstructed artifacts.'],
+            ['morseTool', 'Morse Code', 'Decode radio-style dot/dash clues.'],
+        ],
+        steps: [
+            'Open the capture externally and identify protocols, conversations and exported objects.',
+            'Export suspicious payloads or files, then inspect them in BlackBox.',
+            'Decode credentials, tokens, DNS labels or payload blobs with Auto Decoder.',
+            'Hash reconstructed files and scan strings for flags.',
+        ],
+        external: 'Use Wireshark, tshark and NetworkMiner for filtering, stream following and object export.',
+    },
+    {
+        category: 'Cloud / Web3 / Blockchain',
+        keywords: ['cloud', 'aws', 's3', 'bucket', 'iam', 'gcp', 'azure', 'serverless', 'snapshot', 'blockchain', 'web3', 'contract', 'token', 'ledger', 'transaction', 'wallet', 'ethereum', 'solidity'],
+        tools: [
+            ['urlParser', 'URL Parser', 'Parse bucket URLs, API endpoints and object paths.'],
+            ['headerParser', 'Header Parser', 'Inspect cloud/API response headers and auth hints.'],
+            ['diffChecker', 'Diff Checker', 'Compare normal and privileged API responses.'],
+            ['timestampConverter', 'Timestamp Converter', 'Decode block, token and log timestamps.'],
+            ['hmacGenerator', 'HMAC Generator', 'Test request-signing clues if secrets are provided.'],
+            ['autoDecoder', 'Auto Decoder', 'Decode object keys, tokens and leaked config values.'],
+        ],
+        steps: [
+            'Record endpoints, account IDs, bucket names, regions, object paths and token values.',
+            'Parse URLs and headers for region, service and permission clues.',
+            'Compare API responses across roles or parameters.',
+            'Decode timestamps, signatures or encoded config values.',
+            'Use official CLIs only on challenge-provided resources.',
+        ],
+        external: 'Use aws/gcloud/az CLIs, block explorers, cast, foundry or hardhat when required.',
+    },
+    {
+        category: 'AI / ML Security',
+        keywords: ['ai', 'ml', 'model', 'prompt', 'jailbreak', 'injection', 'classifier', 'adversarial', 'guardrail', 'llm', 'system prompt', 'training', 'prediction'],
+        tools: [
+            ['ctfNotepad', 'CTF Notepad', 'Track prompts, responses and policy changes.'],
+            ['diffChecker', 'Diff Checker', 'Compare successful and failed prompt outputs.'],
+            ['autoDecoder', 'Auto Decoder', 'Decode leaked blobs or encoded model output.'],
+            ['flagDetector', 'Flag Auto-Detector', 'Scan long responses and decoded variants.'],
+            ['regexTester', 'Regex Tester', 'Extract structured leaks from model output.'],
+        ],
+        steps: [
+            'Save each prompt and response before changing strategy.',
+            'Compare responses to identify which words or structures change behavior.',
+            'Look for hidden instructions, encoded strings and partial flags.',
+            'Scan every long output for flags and encoded variants.',
+        ],
+        external: 'Use only the challenge model or sandbox. Do not target unrelated AI services.',
+    },
+    {
+        category: 'Misc / Programming',
+        keywords: ['misc', 'programming', 'script', 'automation', 'logic', 'puzzle', 'qr', 'morse', 'timestamp', 'uuid', 'diff', 'wordlist', 'password', 'generate', 'parse', 'format'],
+        tools: [
+            ['autoDecoder', 'Auto Decoder', 'Quickly test common encodings in puzzle text.'],
+            ['qrTool', 'QR Code Tool', 'Read or generate QR codes.'],
+            ['morseTool', 'Morse Code', 'Decode dot/dash clues.'],
+            ['timestampConverter', 'Timestamp Converter', 'Convert Unix dates and time clues.'],
+            ['uuidTool', 'UUID Tool', 'Inspect UUID version and structure.'],
+            ['wordlistGen', 'Wordlist Generator', 'Generate challenge-themed candidate words.'],
+            ['diffChecker', 'Diff Checker', 'Compare outputs, files or puzzle states.'],
+        ],
+        steps: [
+            'Identify the exact input and expected output shape.',
+            'Try simple decoders and format converters first.',
+            'Use Diff Checker when two versions of text or output are provided.',
+            'Generate small wordlists only when the challenge clearly hints at guessing or cracking.',
+            'Automate repetitive logic externally once the pattern is clear.',
+        ],
+        external: 'Use a short Python or Node script for repeated transformations or large input processing.',
+    },
+];
+
+const CHALLENGE_SIGNAL_PATTERNS = [
+    ['URL present', /https?:\/\/[^\s"'<>]+/i],
+    ['JWT-like token', /\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]*/],
+    ['Hex blob', /\b(?:0x)?[a-f0-9]{32,}\b/i],
+    ['Base64-like blob', /\b[A-Za-z0-9+/]{24,}={0,2}\b/],
+    ['Binary bytes', /\b[01]{8}(?:\s+[01]{8}){2,}\b/],
+    ['Flag-like text', /\b[A-Z0-9_]{2,16}\{[^}]+\}/],
+    ['File extension clue', /\.(png|jpg|jpeg|gif|wav|mp3|mp4|pcap|zip|tar|gz|elf|exe|apk|pdf)\b/i],
+    ['Hash length clue', /\b[a-f0-9]{32}\b|\b[a-f0-9]{40}\b|\b[a-f0-9]{64}\b/i],
+];
+
+function buildChallengeAdvisor(panel){
+    panel.innerHTML = `
+    ${toolHeader('', 'Challenge Flow Advisor', 'Paste a challenge description and get a recommended BlackBox tool workflow')}
+    <div class="tool-wrap">
+        <div class="tool-title">Challenge Flow Advisor</div>
+        <div class="info-box">Offline rule-based triage. It suggests BlackBox tools and outside tools from the wording of the challenge.</div>
+        <label>Challenge Description</label>
+        <textarea id="challengeAdvisorInput" style="min-height:170px;" placeholder="Paste the challenge title, category, description, hints, file names, URLs, sample output or suspicious strings..."></textarea>
+        <div class="button-group">
+            <button class="btn btn-run" onclick="runChallengeAdvisor()">Build Tool Flow</button>
+            <button class="btn btn-outline" onclick="clearChallengeAdvisor()">Clear</button>
+        </div>
+        ${createOutput('challengeAdvisorOutput', 'Recommended Flow')}
+    </div>`;
+    autoSaveInput('challengeAdvisorInput', 'challengeAdvisor');
+}
+
+function challengeKeywordMatches(text, keyword){
+    const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    if(/\s/.test(keyword)) return text.includes(keyword);
+    return new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`, 'i').test(text);
+}
+
+function scoreChallengeRule(text, rule){
+    let score = 0;
+    const hits = [];
+    for(const keyword of rule.keywords){
+        if(challengeKeywordMatches(text, keyword)){
+            score += keyword.length > 5 ? 2 : 1;
+            hits.push(keyword);
+        }
+    }
+    return { rule, score, hits };
+}
+
+function uniqueAdvisorTools(tools){
+    const seen = new Set();
+    return tools
+        .map(tool => Array.isArray(tool) ? { id: tool[0], name: tool[1], reason: tool[2] } : tool)
+        .filter(tool => {
+            if(seen.has(tool.id)) return false;
+            seen.add(tool.id);
+            return true;
+        });
+}
+
+function getChallengeSignals(text){
+    return CHALLENGE_SIGNAL_PATTERNS
+        .filter(([, regex]) => regex.test(text))
+        .map(([label]) => label);
+}
+
+function getAdvisorToolButton(tool){
+    return TOOL_NAMES[tool.id]
+        ? `<button class="output-action-btn" onclick="showTool('${tool.id}')">Open</button>`
+        : '';
+}
+
+function runChallengeAdvisor(){
+    const input = document.getElementById('challengeAdvisorInput').value.trim();
+    if(!input){ showToast('Paste a challenge description first', 'error'); return; }
+
+    const scored = CHALLENGE_FLOW_RULES
+        .map(rule => scoreChallengeRule(input.toLowerCase(), rule))
+        .sort((a, b) => b.score - a.score);
+    const matches = scored.filter(item => item.score > 0).slice(0, 3);
+    const primary = matches[0] || {
+        rule: {
+            category: 'General CTF Triage',
+            tools: [
+                ['ctfNotepad', 'CTF Notepad', 'Record facts, files, URLs and guesses.'],
+                ['flagDetector', 'Flag Auto-Detector', 'Scan direct text and common decoded variants.'],
+                ['autoDecoder', 'Auto Decoder', 'Try common encodings and simple ciphers.'],
+                ['stringsExtractor', 'Strings Extractor', 'Extract text from provided files.'],
+                ['diffChecker', 'Diff Checker', 'Compare similar outputs or responses.'],
+            ],
+            steps: [
+                'Save the challenge title, category, files and exact prompt in CTF Notepad.',
+                'Scan the prompt and any provided output for flags.',
+                'Try Auto Decoder on every suspicious blob.',
+                'If files are provided, identify type, extract strings and inspect metadata.',
+                'Move into a specialist category once a stronger clue appears.',
+            ],
+            external: 'Use the challenge category, file type and first extracted clue to choose deeper tools.',
+        },
+        score: 0,
+        hits: [],
+    };
+
+    const suggestedTools = uniqueAdvisorTools([
+        ['ctfNotepad', 'CTF Notepad', 'Save the description, assumptions, commands, credentials and final flag.'],
+        ['flagDetector', 'Flag Auto-Detector', 'Check the prompt and every decoded result for K4P{...}.'],
+        ...primary.rule.tools,
+        ['autoDecoder', 'Auto Decoder', 'Use as a quick sanity pass on suspicious text.'],
+    ]).slice(0, 10);
+    const signals = getChallengeSignals(input);
+    const confidence = primary.score >= 6 ? 'High' : primary.score >= 3 ? 'Medium' : primary.score > 0 ? 'Low' : 'General';
+    const secondary = matches.slice(1);
+
+    const html = `
+    <div style="display:grid; gap:14px;">
+        <div style="padding:14px; background:var(--panel-light); border-radius:var(--radius-sm); border-left:3px solid var(--primary);">
+            <div style="color:var(--muted); font-size:11px; text-transform:uppercase; margin-bottom:6px;">Likely Path</div>
+            <div style="font-size:18px; font-weight:800; color:var(--text);">${escapeHtml(primary.rule.category)}</div>
+            <div style="color:var(--muted); font-size:13px; margin-top:6px;">Confidence: ${confidence}${primary.hits.length ? ` - matched: ${escapeHtml(primary.hits.slice(0, 8).join(', '))}` : ''}</div>
+        </div>
+
+        ${signals.length ? `
+        <div style="padding:12px; background:var(--panel-light); border-radius:var(--radius-sm);">
+            <div style="color:var(--primary); font-size:12px; font-weight:700; margin-bottom:8px;">Detected Signals</div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                ${signals.map(signal => `<span style="padding:5px 8px; border:1px solid var(--border); border-radius:999px; color:var(--muted-light); font-size:12px;">${escapeHtml(signal)}</span>`).join('')}
+            </div>
+        </div>` : ''}
+
+        ${secondary.length ? `
+        <div style="padding:12px; background:var(--panel-light); border-radius:var(--radius-sm);">
+            <div style="color:var(--primary); font-size:12px; font-weight:700; margin-bottom:8px;">Also Consider</div>
+            ${secondary.map(item => `
+                <div style="font-size:13px; color:var(--muted-light); margin-bottom:5px;">
+                    <strong style="color:var(--text);">${escapeHtml(item.rule.category)}</strong> - matched ${item.score} signal${item.score === 1 ? '' : 's'}
+                </div>`).join('')}
+        </div>` : ''}
+
+        <div>
+            <div style="color:var(--primary); font-size:12px; font-weight:700; margin-bottom:8px;">Recommended BlackBox Tools</div>
+            ${suggestedTools.map((tool, index) => `
+            <div style="padding:12px; background:var(--panel-light); border-radius:var(--radius-sm); margin-bottom:8px;">
+                <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start;">
+                    <div style="min-width:0;">
+                        <div style="font-weight:800; color:var(--text);">${index + 1}. ${escapeHtml(tool.name)}</div>
+                        <div style="color:var(--muted); font-size:13px; margin-top:4px;">${escapeHtml(tool.reason)}</div>
+                    </div>
+                    ${getAdvisorToolButton(tool)}
+                </div>
+            </div>`).join('')}
+        </div>
+
+        <div>
+            <div style="color:var(--primary); font-size:12px; font-weight:700; margin-bottom:8px;">Suggested Flow</div>
+            ${primary.rule.steps.map((step, index) => `
+            <div style="display:flex; gap:10px; padding:10px 0; border-bottom:1px solid var(--border);">
+                <div style="color:var(--primary); font-family:var(--font-mono); min-width:24px;">${index + 1}</div>
+                <div style="color:var(--text); font-size:13px;">${escapeHtml(step)}</div>
+            </div>`).join('')}
+        </div>
+
+        <div style="padding:12px; background:rgba(210,153,34,0.1); border:1px solid rgba(210,153,34,0.35); border-radius:var(--radius-sm); color:var(--muted-light); font-size:13px;">
+            <strong style="color:var(--warning);">Outside BlackBox:</strong> ${escapeHtml(primary.rule.external)}
+        </div>
+    </div>`;
+
+    setOutput('challengeAdvisorOutput', html, true);
+    showToast('Tool flow generated');
+}
+
+function clearChallengeAdvisor(){
+    document.getElementById('challengeAdvisorInput').value = '';
+    const out = document.getElementById('challengeAdvisorOutput');
+    if(out) out.innerHTML = TOOL_PLACEHOLDER;
+}
+
+// =========================
 // FLAG AUTO-DETECTOR
 // =========================
 

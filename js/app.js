@@ -1,5 +1,6 @@
  
 const TOOL_BUILDERS = {
+    challengeAdvisor: buildChallengeAdvisor,
     flagDetector: buildFlagDetector,
     autoDecoder: buildAutoDecoder,
     ctfNotepad: buildCtfNotepad,
@@ -69,6 +70,7 @@ const TOOL_BUILDERS = {
 };
 
 const TOOL_NAMES = {
+    challengeAdvisor: 'Challenge Flow Advisor',
     flagDetector: 'Flag Auto-Detector',
     autoDecoder: 'Auto Decoder',
     ctfNotepad: 'CTF Notepad',
